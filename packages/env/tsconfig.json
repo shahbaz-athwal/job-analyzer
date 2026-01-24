@@ -1,0 +1,6 @@
+{
+  "extends": "@job-analyzer/config/tsconfig.base.json",
+  "compilerOptions": {
+    "strictNullChecks": true
+  }
+}
