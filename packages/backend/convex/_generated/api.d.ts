@@ -8,7 +8,14 @@
  * @module
  */
 
+import type * as analyze from "../analyze.js";
+import type * as applications from "../applications.js";
+import type * as files from "../files.js";
 import type * as healthCheck from "../healthCheck.js";
+import type * as jobs from "../jobs.js";
+import type * as lib_ai from "../lib/ai.js";
+import type * as lib_pdf from "../lib/pdf.js";
+import type * as lib_schemas from "../lib/schemas.js";
 
 import type {
   ApiFromModules,
@@ -17,7 +24,14 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  analyze: typeof analyze;
+  applications: typeof applications;
+  files: typeof files;
   healthCheck: typeof healthCheck;
+  jobs: typeof jobs;
+  "lib/ai": typeof lib_ai;
+  "lib/pdf": typeof lib_pdf;
+  "lib/schemas": typeof lib_schemas;
 }>;
 
 /**
