@@ -21,6 +21,18 @@ const TITLE_TEXT = `
 export default function Home() {
 	const healthCheck = useQuery(api.healthCheck.get);
 
+	const getStatusColor = () => {
+		if (healthCheck === "OK") return "bg-green-500";
+		if (healthCheck === undefined) return "bg-orange-400";
+		return "bg-red-500";
+	};
+
+	const getStatusText = () => {
+		if (healthCheck === undefined) return "Checking...";
+		if (healthCheck === "OK") return "Connected";
+		return "Error";
+	};
+
 	return (
 		<div className="container mx-auto max-w-3xl px-4 py-2">
 			<pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
@@ -28,15 +40,9 @@ export default function Home() {
 				<section className="rounded-lg border p-4">
 					<h2 className="mb-2 font-medium">API Status</h2>
 					<div className="flex items-center gap-2">
-						<div
-							className={`h-2 w-2 rounded-full ${healthCheck === "OK" ? "bg-green-500" : healthCheck === undefined ? "bg-orange-400" : "bg-red-500"}`}
-						/>
+						<div className={`h-2 w-2 rounded-full ${getStatusColor()}`} />
 						<span className="text-muted-foreground text-sm">
-							{healthCheck === undefined
-								? "Checking..."
-								: healthCheck === "OK"
-									? "Connected"
-									: "Error"}
+							{getStatusText()}
 						</span>
 					</div>
 				</section>

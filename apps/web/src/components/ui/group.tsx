@@ -39,7 +39,6 @@ function Group({
 			className={cn(groupVariants({ orientation }), className)}
 			data-orientation={orientation}
 			data-slot="group"
-			role="group"
 			{...props}
 		>
 			{children}
