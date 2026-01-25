@@ -212,7 +212,19 @@ export function CreateJobSheet({ open, onOpenChange }: CreateJobSheetProps) {
           </form>
         </SheetPanel>
         <SheetFooter>
-          <SheetClose render={<Button variant="outline" />}>Cancel</SheetClose>
+          <SheetClose
+            aria-keyshortcuts="Escape"
+            render={
+              <Button variant="outline">
+                Cancel
+                <KbdGroup className="ml-1.5 hidden sm:inline-flex">
+                  <Kbd>Esc</Kbd>
+                </KbdGroup>
+              </Button>
+            }
+          >
+            Cancel
+          </SheetClose>
           <Button
             disabled={isSubmitting || !isFormValid}
             form="create-job-form"
@@ -227,7 +239,7 @@ export function CreateJobSheet({ open, onOpenChange }: CreateJobSheetProps) {
               <>
                 <Plus className="size-4" />
                 Create Job
-                <KbdGroup className="ml-1.5 hidden sm:inline-flex">
+                <KbdGroup className="ml-1.5 hidden invert sm:inline-flex">
                   <Kbd>⌘ + ↵</Kbd>
                 </KbdGroup>
               </>
