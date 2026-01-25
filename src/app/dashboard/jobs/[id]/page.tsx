@@ -29,6 +29,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import {
   Progress,
   ProgressIndicator,
   ProgressTrack,
@@ -98,19 +105,21 @@ export default function JobDetailDashboardPage() {
     return (
       <div className="container mx-auto max-w-6xl px-4 py-8">
         <Card>
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
-              <Briefcase className="size-8 text-muted-foreground" />
-            </div>
-            <CardTitle>Job Not Found</CardTitle>
-            <CardDescription>
-              This job posting may have been deleted.
-            </CardDescription>
-            <Button className="mt-4" render={<Link href="/dashboard" />}>
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <Briefcase />
+              </EmptyMedia>
+              <EmptyTitle>Job Not Found</EmptyTitle>
+              <EmptyDescription>
+                This job posting may have been deleted.
+              </EmptyDescription>
+            </EmptyHeader>
+            <Button render={<Link href="/dashboard" />}>
               <ArrowLeft className="size-4" />
               Back to Dashboard
             </Button>
-          </CardHeader>
+          </Empty>
         </Card>
       </div>
     );
@@ -195,15 +204,17 @@ export default function JobDetailDashboardPage() {
               </div>
             )}
             {applications?.length === 0 && (
-              <div className="py-12 text-center">
-                <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
-                  <Users className="size-8 text-muted-foreground" />
-                </div>
-                <p className="text-muted-foreground">
-                  No applications yet. Share your job posting to get applicants!
-                </p>
+              <Empty>
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <Users />
+                  </EmptyMedia>
+                  <EmptyTitle>No Applications Yet</EmptyTitle>
+                  <EmptyDescription>
+                    Share your job posting to get applicants!
+                  </EmptyDescription>
+                </EmptyHeader>
                 <Button
-                  className="mt-4"
                   onClick={() =>
                     navigator.clipboard.writeText(
                       `${window.location.origin}/jobs/${jobId}`
@@ -214,7 +225,7 @@ export default function JobDetailDashboardPage() {
                   <ExternalLink className="size-4" />
                   Copy Job Link
                 </Button>
-              </div>
+              </Empty>
             )}
             {applications && applications.length > 0 && (
               <div className="space-y-3">

@@ -5,8 +5,6 @@ import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
-import { ModeToggle } from "./mode-toggle";
-
 export default function Header() {
   const pathname = usePathname();
 
@@ -45,9 +43,6 @@ export default function Header() {
               );
             })}
           </nav>
-        </div>
-        <div className="flex items-center gap-2">
-          <ModeToggle />
         </div>
       </div>
     </div>

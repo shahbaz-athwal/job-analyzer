@@ -10,6 +10,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 
@@ -58,15 +65,17 @@ export default function JobsPage() {
       )}
       {jobs?.length === 0 && (
         <Card>
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
-              <Briefcase className="size-8 text-muted-foreground" />
-            </div>
-            <CardTitle>No Open Positions</CardTitle>
-            <CardDescription>
-              Check back later for new opportunities.
-            </CardDescription>
-          </CardHeader>
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <Briefcase />
+              </EmptyMedia>
+              <EmptyTitle>No Open Positions</EmptyTitle>
+              <EmptyDescription>
+                Check back later for new opportunities.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         </Card>
       )}
       {jobs && jobs.length > 0 && (

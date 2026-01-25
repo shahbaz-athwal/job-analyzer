@@ -10,6 +10,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { api } from "@/convex/_generated/api";
 
@@ -48,18 +55,21 @@ function JobsListSkeleton() {
 
 function JobsListEmpty({ onCreateClick }: { onCreateClick: () => void }) {
   return (
-    <div className="py-12 text-center">
-      <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
-        <Briefcase className="size-8 text-muted-foreground" />
-      </div>
-      <p className="mb-4 text-muted-foreground">
-        No jobs yet. Create your first posting!
-      </p>
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <Briefcase />
+        </EmptyMedia>
+        <EmptyTitle>No Jobs Yet</EmptyTitle>
+        <EmptyDescription>
+          Create your first posting to get started!
+        </EmptyDescription>
+      </EmptyHeader>
       <Button onClick={onCreateClick}>
         <Plus className="size-4" />
         Create Job
       </Button>
-    </div>
+    </Empty>
   );
 }
 

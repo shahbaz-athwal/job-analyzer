@@ -26,6 +26,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -141,19 +148,21 @@ export default function JobDetailPage() {
     return (
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <Card>
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
-              <Briefcase className="size-8 text-muted-foreground" />
-            </div>
-            <CardTitle>Job Not Found</CardTitle>
-            <CardDescription>
-              This position may have been removed or is no longer available.
-            </CardDescription>
-            <Button className="mt-4" render={<Link href="/jobs" />}>
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <Briefcase />
+              </EmptyMedia>
+              <EmptyTitle>Job Not Found</EmptyTitle>
+              <EmptyDescription>
+                This position may have been removed or is no longer available.
+              </EmptyDescription>
+            </EmptyHeader>
+            <Button render={<Link href="/jobs" />}>
               <ArrowLeft className="size-4" />
               Back to Jobs
             </Button>
-          </CardHeader>
+          </Empty>
         </Card>
       </div>
     );

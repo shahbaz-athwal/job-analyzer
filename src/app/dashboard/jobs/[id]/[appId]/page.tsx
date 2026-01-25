@@ -27,6 +27,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import {
   Progress,
   ProgressIndicator,
   ProgressTrack,
@@ -75,22 +82,21 @@ export default function ApplicantDetailPage() {
     return (
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <Card>
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
-              <User className="size-8 text-muted-foreground" />
-            </div>
-            <CardTitle>Application Not Found</CardTitle>
-            <CardDescription>
-              This application may have been deleted.
-            </CardDescription>
-            <Button
-              className="mt-4"
-              render={<Link href={`/dashboard/jobs/${jobId}`} />}
-            >
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <User />
+              </EmptyMedia>
+              <EmptyTitle>Application Not Found</EmptyTitle>
+              <EmptyDescription>
+                This application may have been deleted.
+              </EmptyDescription>
+            </EmptyHeader>
+            <Button render={<Link href={`/dashboard/jobs/${jobId}`} />}>
               <ArrowLeft className="size-4" />
               Back to Applicants
             </Button>
-          </CardHeader>
+          </Empty>
         </Card>
       </div>
     );
