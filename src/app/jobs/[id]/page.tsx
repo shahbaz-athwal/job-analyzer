@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import type { FormEvent } from "react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +26,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
@@ -63,12 +66,6 @@ export default function JobDetailPage() {
   } | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  // Form state
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [coverLetter, setCoverLetter] = useState("");
-
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
@@ -100,9 +97,17 @@ export default function JobDetailPage() {
     disabled: isUploading,
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!(uploadedFile && name && email)) return;
+    if (!uploadedFile) return;
+
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const phone = formData.get("phone") as string;
+    const coverLetter = formData.get("coverLetter") as string;
+
+    if (!(name && email)) return;
 
     setIsSubmitting(true);
     try {
@@ -221,64 +226,52 @@ export default function JobDetailPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form className="space-y-4" onSubmit={handleSubmit}>
-                  <div className="space-y-2">
-                    <label className="font-medium text-sm" htmlFor="name">
-                      Full Name *
-                    </label>
+                <Form onSubmit={handleSubmit}>
+                  <Field name="name">
+                    <FieldLabel>
+                      Full Name <span className="text-destructive">*</span>
+                    </FieldLabel>
                     <Input
-                      id="name"
-                      onChange={(e) => setName(e.target.value)}
+                      disabled={isSubmitting}
                       placeholder="John Doe"
                       required
-                      value={name}
                     />
-                  </div>
+                  </Field>
 
-                  <div className="space-y-2">
-                    <label className="font-medium text-sm" htmlFor="email">
-                      Email *
-                    </label>
+                  <Field name="email">
+                    <FieldLabel>
+                      Email <span className="text-destructive">*</span>
+                    </FieldLabel>
                     <Input
-                      id="email"
-                      onChange={(e) => setEmail(e.target.value)}
+                      disabled={isSubmitting}
                       placeholder="john@example.com"
                       required
                       type="email"
-                      value={email}
                     />
-                  </div>
+                  </Field>
 
-                  <div className="space-y-2">
-                    <label className="font-medium text-sm" htmlFor="phone">
-                      Phone
-                    </label>
+                  <Field name="phone">
+                    <FieldLabel>Phone</FieldLabel>
                     <Input
-                      id="phone"
-                      onChange={(e) => setPhone(e.target.value)}
+                      disabled={isSubmitting}
                       placeholder="+1 (555) 000-0000"
                       type="tel"
-                      value={phone}
                     />
-                  </div>
+                  </Field>
 
-                  <div className="space-y-2">
-                    <label className="font-medium text-sm" htmlFor="cover">
-                      Cover Letter
-                    </label>
+                  <Field name="coverLetter">
+                    <FieldLabel>Cover Letter</FieldLabel>
                     <Textarea
                       className="min-h-24"
-                      id="cover"
-                      onChange={(e) => setCoverLetter(e.target.value)}
+                      disabled={isSubmitting}
                       placeholder="Tell us why you're a great fit..."
-                      value={coverLetter}
                     />
-                  </div>
+                  </Field>
 
-                  <div className="space-y-2">
-                    <label className="font-medium text-sm" htmlFor="resume">
-                      Resume *
-                    </label>
+                  <Field name="resume">
+                    <FieldLabel>
+                      Resume <span className="text-destructive">*</span>
+                    </FieldLabel>
                     {uploadedFile ? (
                       <div className="flex items-center justify-between rounded-lg border bg-muted/50 p-3">
                         <div className="flex items-center gap-2">
@@ -288,6 +281,7 @@ export default function JobDetailPage() {
                           </span>
                         </div>
                         <Button
+                          disabled={isSubmitting}
                           onClick={() => setUploadedFile(null)}
                           size="icon-xs"
                           type="button"
@@ -303,10 +297,11 @@ export default function JobDetailPage() {
                           "cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition-colors",
                           isDragActive
                             ? "border-primary bg-primary/5"
-                            : "border-input hover:border-primary/50"
+                            : "border-input hover:border-primary/50",
+                          isSubmitting && "pointer-events-none opacity-50"
                         )}
                       >
-                        <input {...getInputProps()} id="resume" />
+                        <input {...getInputProps()} />
                         <div className="flex flex-col items-center gap-2">
                           {isUploading ? (
                             <Loader2 className="size-8 animate-spin text-muted-foreground" />
@@ -324,11 +319,11 @@ export default function JobDetailPage() {
                         </div>
                       </div>
                     )}
-                  </div>
+                  </Field>
 
                   <Button
                     className="w-full"
-                    disabled={isSubmitting || !uploadedFile || !name || !email}
+                    disabled={isSubmitting || !uploadedFile}
                     type="submit"
                   >
                     {isSubmitting ? (
@@ -343,7 +338,7 @@ export default function JobDetailPage() {
                       </>
                     )}
                   </Button>
-                </form>
+                </Form>
               </CardContent>
             </Card>
           ) : (
