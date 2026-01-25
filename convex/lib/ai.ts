@@ -5,8 +5,8 @@ const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // Model registry - easily swap by changing the active model
 export const models = {
-	"gpt-4o": openai("gpt-4o"),
-	"gpt-4o-mini": openai("gpt-4o-mini"),
+  "gpt-4o": openai("gpt-4o"),
+  "gpt-4o-mini": openai("gpt-4o-mini"),
 } as const;
 
 // Active model - change this one line to swap providers

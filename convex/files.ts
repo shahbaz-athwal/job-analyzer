@@ -2,8 +2,8 @@ import { mutation } from "./_generated/server";
 
 // Generate an upload URL for resume files
 export const generateUploadUrl = mutation({
-	args: {},
-	handler: async (ctx) => {
-		return await ctx.storage.generateUploadUrl();
-	},
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.storage.generateUploadUrl();
+  },
 });
