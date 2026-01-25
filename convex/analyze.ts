@@ -1,3 +1,4 @@
+"use node";
 import { generateObject } from "ai";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";

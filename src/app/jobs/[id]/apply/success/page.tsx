@@ -1,12 +1,9 @@
 "use client";
 
-import { api } from "@job-analyzer/backend/convex/_generated/api";
-import type { Id } from "@job-analyzer/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -15,6 +12,8 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 
 export default function ApplicationSuccessPage() {
 	const params = useParams();

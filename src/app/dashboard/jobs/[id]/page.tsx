@@ -1,7 +1,5 @@
 "use client";
 
-import { api } from "@job-analyzer/backend/convex/_generated/api";
-import type { Id } from "@job-analyzer/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import {
 	AlertTriangle,
@@ -21,7 +19,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,6 +34,8 @@ import {
 	ProgressTrack,
 } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 
 const jobTypeLabel = {
@@ -74,10 +73,11 @@ export default function JobDetailDashboardPage() {
 	};
 
 	const handleDelete = async () => {
-		if (
-			!confirm("Are you sure you want to delete this job and all applications?")
-		)
-			return;
+		// biome-ignore lint/suspicious/noAlert: Replace with custom dialog for production
+		const confirmed = confirm(
+			"Are you sure you want to delete this job and all applications?"
+		);
+		if (!confirmed) return;
 		await deleteJob({ id: jobId });
 		router.push("/dashboard");
 	};
@@ -187,13 +187,14 @@ export default function JobDetailDashboardPage() {
 						</div>
 					</CardHeader>
 					<CardContent>
-						{applications === undefined ? (
+						{applications === undefined && (
 							<div className="space-y-4">
 								{[1, 2, 3].map((i) => (
 									<Skeleton className="h-24" key={i} />
 								))}
 							</div>
-						) : applications.length === 0 ? (
+						)}
+						{applications?.length === 0 && (
 							<div className="py-12 text-center">
 								<div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
 									<Users className="size-8 text-muted-foreground" />
@@ -214,7 +215,8 @@ export default function JobDetailDashboardPage() {
 									Copy Job Link
 								</Button>
 							</div>
-						) : (
+						)}
+						{applications && applications.length > 0 && (
 							<div className="space-y-3">
 								{applications.map((app, index) => (
 									<Link

@@ -1,7 +1,5 @@
 "use client";
 
-import { api } from "@job-analyzer/backend/convex/_generated/api";
-import type { Id } from "@job-analyzer/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import {
 	AlertTriangle,
@@ -19,7 +17,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,6 +32,8 @@ import {
 	ProgressTrack,
 } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 
 function getScoreColor(score: number) {
@@ -123,6 +122,7 @@ export default function ApplicantDetailPage() {
 					{application.resumeUrl && (
 						<Button
 							render={
+								// biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
 								<a
 									href={application.resumeUrl}
 									rel="noopener noreferrer"
@@ -164,7 +164,7 @@ export default function ApplicantDetailPage() {
 			<div className="grid gap-6 lg:grid-cols-[1fr_280px]">
 				<div className="space-y-6">
 					{/* Score Card */}
-					{application.status === "processing" ? (
+					{application.status === "processing" && (
 						<Card>
 							<CardHeader className="text-center">
 								<div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
@@ -177,7 +177,8 @@ export default function ApplicantDetailPage() {
 								</CardDescription>
 							</CardHeader>
 						</Card>
-					) : application.status === "error" ? (
+					)}
+					{application.status === "error" && (
 						<Card>
 							<CardHeader className="text-center">
 								<div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-destructive/10">
@@ -190,7 +191,8 @@ export default function ApplicantDetailPage() {
 								</CardDescription>
 							</CardHeader>
 						</Card>
-					) : analysis ? (
+					)}
+					{application.status === "analyzed" && analysis && (
 						<>
 							{/* Score Overview */}
 							<Card>
@@ -235,8 +237,11 @@ export default function ApplicantDetailPage() {
 									</CardHeader>
 									<CardContent>
 										<ul className="space-y-2">
-											{analysis.strengths.map((strength, i) => (
-												<li className="flex items-start gap-2 text-sm" key={i}>
+											{analysis.strengths.map((strength) => (
+												<li
+													className="flex items-start gap-2 text-sm"
+													key={strength}
+												>
 													<span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-green-500" />
 													{strength}
 												</li>
@@ -255,10 +260,10 @@ export default function ApplicantDetailPage() {
 									<CardContent>
 										<ul className="space-y-2">
 											{analysis.weaknesses.length > 0 ? (
-												analysis.weaknesses.map((weakness, i) => (
+												analysis.weaknesses.map((weakness) => (
 													<li
 														className="flex items-start gap-2 text-sm"
-														key={i}
+														key={weakness}
 													>
 														<span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-red-500" />
 														{weakness}
@@ -283,8 +288,8 @@ export default function ApplicantDetailPage() {
 									<div>
 										<p className="mb-2 font-medium text-sm">Matched Skills</p>
 										<div className="flex flex-wrap gap-2">
-											{analysis.matchedSkills.map((skill, i) => (
-												<Badge key={i} variant="success">
+											{analysis.matchedSkills.map((skill) => (
+												<Badge key={skill} variant="success">
 													<CheckCircle2 className="size-3" />
 													{skill}
 												</Badge>
@@ -299,8 +304,8 @@ export default function ApplicantDetailPage() {
 									<div>
 										<p className="mb-2 font-medium text-sm">Missing Skills</p>
 										<div className="flex flex-wrap gap-2">
-											{analysis.missingSkills.map((skill, i) => (
-												<Badge key={i} variant="error">
+											{analysis.missingSkills.map((skill) => (
+												<Badge key={skill} variant="error">
 													<XCircle className="size-3" />
 													{skill}
 												</Badge>
@@ -315,7 +320,7 @@ export default function ApplicantDetailPage() {
 								</CardContent>
 							</Card>
 						</>
-					) : null}
+					)}
 
 					{/* Cover Letter */}
 					{application.coverLetter && (
@@ -349,6 +354,7 @@ export default function ApplicantDetailPage() {
 								<Button
 									className="w-full"
 									render={
+										// biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
 										<a
 											href={application.resumeUrl}
 											rel="noopener noreferrer"
@@ -371,7 +377,10 @@ export default function ApplicantDetailPage() {
 						<CardContent className="space-y-2">
 							<Button
 								className="w-full"
-								render={<a href={`mailto:${application.email}`} />}
+								render={
+									// biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
+									<a href={`mailto:${application.email}`} />
+								}
 								variant="outline"
 							>
 								<Mail className="size-4" />
@@ -380,7 +389,10 @@ export default function ApplicantDetailPage() {
 							{application.phone && (
 								<Button
 									className="w-full"
-									render={<a href={`tel:${application.phone}`} />}
+									render={
+										// biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
+										<a href={`tel:${application.phone}`} />
+									}
 									variant="outline"
 								>
 									<Phone className="size-4" />

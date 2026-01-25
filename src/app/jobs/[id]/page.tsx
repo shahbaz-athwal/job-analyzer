@@ -1,7 +1,5 @@
 "use client";
 
-import { api } from "@job-analyzer/backend/convex/_generated/api";
-import type { Id } from "@job-analyzer/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import {
 	ArrowLeft,
@@ -18,7 +16,6 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +28,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 
 const jobTypeBadgeVariant = {
@@ -277,7 +276,9 @@ export default function JobDetailPage() {
 									</div>
 
 									<div className="space-y-2">
-										<label className="font-medium text-sm">Resume *</label>
+										<label className="font-medium text-sm" htmlFor="resume">
+											Resume *
+										</label>
 										{uploadedFile ? (
 											<div className="flex items-center justify-between rounded-lg border bg-muted/50 p-3">
 												<div className="flex items-center gap-2">
@@ -305,7 +306,7 @@ export default function JobDetailPage() {
 														: "border-input hover:border-primary/50"
 												)}
 											>
-												<input {...getInputProps()} />
+												<input {...getInputProps()} id="resume" />
 												<div className="flex flex-col items-center gap-2">
 													{isUploading ? (
 														<Loader2 className="size-8 animate-spin text-muted-foreground" />

@@ -1,10 +1,8 @@
 "use client";
 
-import { api } from "@job-analyzer/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { Briefcase, Clock, MapPin } from "lucide-react";
 import Link from "next/link";
-
 import { Badge } from "@/components/ui/badge";
 import {
 	Card,
@@ -13,6 +11,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
 
 const jobTypeBadgeVariant = {
 	"full-time": "default",
@@ -41,7 +40,7 @@ export default function JobsPage() {
 				</p>
 			</div>
 
-			{jobs === undefined ? (
+			{jobs === undefined && (
 				<div className="grid gap-4">
 					{[1, 2, 3].map((i) => (
 						<Card key={i}>
@@ -56,7 +55,8 @@ export default function JobsPage() {
 						</Card>
 					))}
 				</div>
-			) : jobs.length === 0 ? (
+			)}
+			{jobs?.length === 0 && (
 				<Card>
 					<CardHeader className="text-center">
 						<div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
@@ -68,7 +68,8 @@ export default function JobsPage() {
 						</CardDescription>
 					</CardHeader>
 				</Card>
-			) : (
+			)}
+			{jobs && jobs.length > 0 && (
 				<div className="grid gap-4">
 					{jobs.map((job) => (
 						<Link href={`/jobs/${job._id}`} key={job._id}>

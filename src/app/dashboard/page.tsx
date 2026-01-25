@@ -1,10 +1,8 @@
 "use client";
 
-import { api } from "@job-analyzer/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { ArrowRight, Briefcase, Plus, Users } from "lucide-react";
 import Link from "next/link";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +13,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
 
 const jobTypeLabel = {
 	"full-time": "Full-time",
@@ -78,7 +77,7 @@ export default function DashboardPage() {
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					{jobs === undefined ? (
+					{jobs === undefined && (
 						<div className="space-y-4">
 							{[1, 2, 3].map((i) => (
 								<div
@@ -93,7 +92,8 @@ export default function DashboardPage() {
 								</div>
 							))}
 						</div>
-					) : jobs.length === 0 ? (
+					)}
+					{jobs?.length === 0 && (
 						<div className="py-12 text-center">
 							<div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
 								<Briefcase className="size-8 text-muted-foreground" />
@@ -106,7 +106,8 @@ export default function DashboardPage() {
 								Create Job
 							</Button>
 						</div>
-					) : (
+					)}
+					{jobs && jobs.length > 0 && (
 						<div className="space-y-2">
 							{jobs.map((job) => (
 								<Link

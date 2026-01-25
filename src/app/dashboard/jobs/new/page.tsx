@@ -1,12 +1,10 @@
 "use client";
 
-import { api } from "@job-analyzer/backend/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { ArrowLeft, Loader2, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -24,6 +22,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { api } from "@/convex/_generated/api";
 
 type JobType = "full-time" | "part-time" | "contract" | "internship";
 
@@ -120,12 +119,14 @@ export default function CreateJobPage() {
 							</div>
 
 							<div className="space-y-2">
-								<label className="font-medium text-sm">Job Type *</label>
+								<label className="font-medium text-sm" htmlFor="job-type">
+									Job Type *
+								</label>
 								<Select
 									onValueChange={(v) => setType(v as JobType)}
 									value={type}
 								>
-									<SelectTrigger>
+									<SelectTrigger id="job-type">
 										<SelectValue placeholder="Select type" />
 									</SelectTrigger>
 									<SelectPopup>
