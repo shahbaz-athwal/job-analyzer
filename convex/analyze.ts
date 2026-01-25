@@ -1,5 +1,5 @@
 "use node";
-import { generateObject } from "ai";
+import { generateText, Output } from "ai";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { internalAction } from "./_generated/server";
@@ -65,9 +65,11 @@ export const analyzeApplication = internalAction({
       const text = await extractTextFromPdf(blob);
 
       // Analyze with AI SDK
-      const { object: analysis } = await generateObject({
+      const { output: analysis } = await generateText({
         model: analysisModel,
-        schema: AnalysisSchema,
+        output: Output.object({
+          schema: AnalysisSchema,
+        }),
         prompt: buildAnalysisPrompt(job.description, job.requirements, text),
       });
 

@@ -192,7 +192,7 @@ export default function ApplicantDetailPage() {
               </CardHeader>
             </Card>
           )}
-          {application.status === "analyzed" && analysis && (
+          {application.status === "reviewed" && analysis && (
             <>
               {/* Score Overview */}
               <Card>

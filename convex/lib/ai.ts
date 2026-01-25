@@ -1,13 +1,16 @@
-import { createOpenAI } from "@ai-sdk/openai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 
 // Provider instance - configure with API key from env
-const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const google = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+});
 
 // Model registry - easily swap by changing the active model
 export const models = {
-  "gpt-4o": openai("gpt-4o"),
-  "gpt-4o-mini": openai("gpt-4o-mini"),
+  "gemini-2.0-flash": google("gemini-2.0-flash"),
+  "gemini-2.5-flash": google("gemini-2.5-flash"),
+  "gemini-flash-latest": google("gemini-flash-latest"),
 } as const;
 
 // Active model - change this one line to swap providers
-export const analysisModel = models["gpt-4o-mini"];
+export const analysisModel = models["gemini-flash-latest"];
