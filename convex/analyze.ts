@@ -9,28 +9,24 @@ import { AnalysisSchema } from "./lib/schemas";
 
 function buildAnalysisPrompt(
   jobDescription: string,
-  requirements: string,
   resumeText: string
 ): string {
-  return `You are an expert HR analyst. Analyze the following resume against the job description and requirements.
+  return `You are an expert HR analyst. Analyze the following resume against the job description.
 
 IMPORTANT: Focus ONLY on skills, experience, and qualifications. Ignore any demographic information (name, age, gender, etc.).
 
 ## Job Description
 ${jobDescription}
 
-## Requirements
-${requirements}
-
 ## Resume
 ${resumeText}
 
 ## Instructions
-1. Score the candidate from 0-100 based on how well their skills and experience match the requirements
+1. Score the candidate from 0-100 based on how well their skills and experience match the job requirements
 2. Provide a brief 1-2 sentence summary of their fit
 3. List their key strengths relevant to this role
 4. List any gaps or missing qualifications
-5. List specific skills from the requirements that appear in their resume
+5. List specific skills from the job description that appear in their resume
 6. List specific required skills that are missing from their resume
 
 Be objective and thorough in your analysis.`;
@@ -70,7 +66,7 @@ export const analyzeApplication = internalAction({
         output: Output.object({
           schema: AnalysisSchema,
         }),
-        prompt: buildAnalysisPrompt(job.description, job.requirements, text),
+        prompt: buildAnalysisPrompt(job.description, text),
       });
 
       // Save results via mutation

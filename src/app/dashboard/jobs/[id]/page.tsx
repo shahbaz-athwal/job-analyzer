@@ -79,7 +79,6 @@ export default function JobDetailDashboardPage() {
   const deleteJob = useMutation(api.jobs.remove);
 
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-  const [isRequirementsExpanded, setIsRequirementsExpanded] = useState(false);
 
   const handleToggleOpen = async () => {
     if (!job) return;
@@ -326,41 +325,6 @@ export default function JobDetailDashboardPage() {
                 variant="link"
               >
                 {isDescriptionExpanded ? (
-                  <>
-                    Show less
-                    <ChevronUp className="size-4" />
-                  </>
-                ) : (
-                  <>
-                    Show more
-                    <ChevronDown className="size-4" />
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Requirements</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div
-                className={cn(
-                  "text-muted-foreground text-sm",
-                  !isRequirementsExpanded && "line-clamp-6"
-                )}
-              >
-                <Markdown>{job.requirements}</Markdown>
-              </div>
-              <Button
-                className="h-auto p-0"
-                onClick={() =>
-                  setIsRequirementsExpanded(!isRequirementsExpanded)
-                }
-                variant="link"
-              >
-                {isRequirementsExpanded ? (
                   <>
                     Show less
                     <ChevronUp className="size-4" />

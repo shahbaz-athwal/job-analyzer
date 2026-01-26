@@ -53,9 +53,8 @@ export function CreateJobSheet({ open, onOpenChange }: CreateJobSheetProps) {
     const location = formData.get("location") as string;
     const type = (formData.get("type") as JobType) || "full-time";
     const description = formData.get("description") as string;
-    const requirements = formData.get("requirements") as string;
 
-    if (!(title && company && location && description && requirements)) return;
+    if (!(title && company && location && description)) return;
 
     setIsSubmitting(true);
     try {
@@ -65,7 +64,6 @@ export function CreateJobSheet({ open, onOpenChange }: CreateJobSheetProps) {
         location,
         type,
         description,
-        requirements,
       });
       onOpenChange(false);
       formRef.current?.reset();
@@ -172,25 +170,14 @@ export function CreateJobSheet({ open, onOpenChange }: CreateJobSheetProps) {
                 Job Description <span className="text-destructive">*</span>
               </FieldLabel>
               <Textarea
-                className="min-h-28"
+                className="min-h-36"
                 disabled={isSubmitting}
-                placeholder="Describe the role, responsibilities, and what makes it exciting..."
-                required
-              />
-            </Field>
-
-            <Field name="requirements">
-              <FieldLabel>
-                Requirements <span className="text-destructive">*</span>
-              </FieldLabel>
-              <Textarea
-                className="min-h-28"
-                disabled={isSubmitting}
-                placeholder="List required skills, experience, and qualifications..."
+                placeholder="Describe the role, responsibilities, required skills, and qualifications..."
                 required
               />
               <FieldDescription>
-                Be specific about required skills for better AI matching.
+                Include role details, requirements, and qualifications for
+                better AI matching.
               </FieldDescription>
             </Field>
           </Form>

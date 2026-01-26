@@ -78,7 +78,6 @@ export const create = mutation({
       v.literal("internship")
     ),
     description: v.string(),
-    requirements: v.string(),
   },
   handler: async (ctx, args) => {
     const jobId = await ctx.db.insert("jobs", {
@@ -106,7 +105,6 @@ export const update = mutation({
       )
     ),
     description: v.optional(v.string()),
-    requirements: v.optional(v.string()),
     isOpen: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {

@@ -211,15 +211,6 @@ export default function JobDetailPage() {
               <Markdown>{job.description}</Markdown>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Requirements</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Markdown>{job.requirements}</Markdown>
-            </CardContent>
-          </Card>
         </div>
 
         <div className="lg:sticky lg:top-4 lg:self-start">

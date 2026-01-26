@@ -14,7 +14,6 @@ export default defineSchema({
       v.literal("internship")
     ),
     description: v.string(),
-    requirements: v.string(),
     isOpen: v.boolean(),
     createdAt: v.number(),
   }).index("by_open", ["isOpen"]),
