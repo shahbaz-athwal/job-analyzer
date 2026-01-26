@@ -1,7 +1,7 @@
 "use client";
 
 import { ConvexProvider, ConvexReactClient } from "convex/react";
-
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ThemeProvider } from "./theme-provider";
 import { Toaster } from "./ui/sonner";
 
@@ -17,7 +17,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
       enableSystem
     >
-      <ConvexProvider client={convex}>{children}</ConvexProvider>
+      <ConvexProvider client={convex}>
+        <NuqsAdapter>{children}</NuqsAdapter>
+      </ConvexProvider>
       <Toaster richColors />
     </ThemeProvider>
   );
