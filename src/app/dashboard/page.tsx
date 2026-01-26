@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "convex/react";
+import { Suspense } from "react";
 import { api } from "@/convex/_generated/api";
 import {
   CreateJobSheet,
@@ -8,7 +9,7 @@ import {
 } from "./_components/create-job-sheet";
 import { JobsList } from "./_components/jobs-list";
 
-export default function DashboardPage() {
+function DashboardContent() {
   const jobs = useQuery(api.jobs.listAll);
 
   return (
@@ -28,5 +29,13 @@ export default function DashboardPage() {
       <JobsList jobs={jobs} />
       <CreateJobSheet />
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense>
+      <DashboardContent />
+    </Suspense>
   );
 }

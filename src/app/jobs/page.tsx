@@ -3,7 +3,7 @@
 import { useQuery } from "convex/react";
 import { Briefcase, Check, ChevronLeft, Clock, MapPin } from "lucide-react";
 import { useQueryState } from "nuqs";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { Markdown } from "@/components/markdown";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +39,52 @@ const jobTypeLabel = {
 } as const;
 
 export default function JobsPage() {
+  return (
+    <Suspense fallback={<JobsPageSkeleton />}>
+      <JobsContent />
+    </Suspense>
+  );
+}
+
+function JobsPageSkeleton() {
+  return (
+    <div className="flex h-[calc(100vh-4rem)] flex-col">
+      <div className="border-b bg-background">
+        <div className="mx-auto max-w-7xl px-4 py-4 lg:px-6">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="mt-2 h-4 w-96" />
+        </div>
+      </div>
+      <div className="mx-auto flex min-h-0 w-full max-w-7xl flex-1">
+        <div className="w-full border-r lg:w-[340px] lg:shrink-0">
+          <div className="space-y-3 p-3">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div className="rounded-lg border p-4" key={i}>
+                <Skeleton className="mb-2 h-5 w-3/4" />
+                <Skeleton className="mb-3 h-4 w-1/2" />
+                <div className="flex gap-3">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="hidden flex-1 lg:block">
+          <div className="space-y-6 p-6">
+            <div>
+              <Skeleton className="mb-2 h-8 w-2/3" />
+              <Skeleton className="h-5 w-1/3" />
+            </div>
+            <Skeleton className="h-64 w-full" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function JobsContent() {
   const jobs = useQuery(api.jobs.listOpen);
   const [selectedJobId, setSelectedJobId] = useQueryState("job");
   const [appliedJobs, setAppliedJobs] = useLocalStorage<string[]>(
