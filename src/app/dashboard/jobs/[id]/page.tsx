@@ -6,6 +6,8 @@ import {
   ArrowLeft,
   ArrowRight,
   Briefcase,
+  ChevronDown,
+  ChevronUp,
   Clock,
   ExternalLink,
   Loader2,
@@ -19,6 +21,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { Markdown } from "@/components/markdown";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -73,6 +77,9 @@ export default function JobDetailDashboardPage() {
   const applications = useQuery(api.applications.listByJob, { jobId });
   const updateJob = useMutation(api.jobs.update);
   const deleteJob = useMutation(api.jobs.remove);
+
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [isRequirementsExpanded, setIsRequirementsExpanded] = useState(false);
 
   const handleToggleOpen = async () => {
     if (!job) return;
@@ -304,10 +311,32 @@ export default function JobDetailDashboardPage() {
             <CardHeader>
               <CardTitle className="text-base">Job Description</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="line-clamp-6 whitespace-pre-wrap text-muted-foreground text-sm">
-                {job.description}
-              </p>
+            <CardContent className="space-y-2">
+              <div
+                className={cn(
+                  "text-muted-foreground text-sm",
+                  !isDescriptionExpanded && "line-clamp-6"
+                )}
+              >
+                <Markdown>{job.description}</Markdown>
+              </div>
+              <Button
+                className="h-auto p-0"
+                onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                variant="link"
+              >
+                {isDescriptionExpanded ? (
+                  <>
+                    Show less
+                    <ChevronUp className="size-4" />
+                  </>
+                ) : (
+                  <>
+                    Show more
+                    <ChevronDown className="size-4" />
+                  </>
+                )}
+              </Button>
             </CardContent>
           </Card>
 
@@ -315,10 +344,34 @@ export default function JobDetailDashboardPage() {
             <CardHeader>
               <CardTitle className="text-base">Requirements</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="line-clamp-6 whitespace-pre-wrap text-muted-foreground text-sm">
-                {job.requirements}
-              </p>
+            <CardContent className="space-y-2">
+              <div
+                className={cn(
+                  "text-muted-foreground text-sm",
+                  !isRequirementsExpanded && "line-clamp-6"
+                )}
+              >
+                <Markdown>{job.requirements}</Markdown>
+              </div>
+              <Button
+                className="h-auto p-0"
+                onClick={() =>
+                  setIsRequirementsExpanded(!isRequirementsExpanded)
+                }
+                variant="link"
+              >
+                {isRequirementsExpanded ? (
+                  <>
+                    Show less
+                    <ChevronUp className="size-4" />
+                  </>
+                ) : (
+                  <>
+                    Show more
+                    <ChevronDown className="size-4" />
+                  </>
+                )}
+              </Button>
             </CardContent>
           </Card>
 

@@ -17,6 +17,7 @@ import { useParams, useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { Markdown } from "@/components/markdown";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -207,9 +208,7 @@ export default function JobDetailPage() {
               <CardTitle>About this role</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="prose prose-sm dark:prose-invert max-w-none">
-                <p className="whitespace-pre-wrap">{job.description}</p>
-              </div>
+              <Markdown>{job.description}</Markdown>
             </CardContent>
           </Card>
 
@@ -218,9 +217,7 @@ export default function JobDetailPage() {
               <CardTitle>Requirements</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="prose prose-sm dark:prose-invert max-w-none">
-                <p className="whitespace-pre-wrap">{job.requirements}</p>
-              </div>
+              <Markdown>{job.requirements}</Markdown>
             </CardContent>
           </Card>
         </div>
