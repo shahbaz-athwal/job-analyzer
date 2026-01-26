@@ -26,23 +26,27 @@ import {
   SheetPanel,
   SheetPopup,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
+import { useSheetState } from "@/hooks/use-sheet-state";
 
 type JobType = "full-time" | "part-time" | "contract" | "internship";
 
-interface CreateJobSheetProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-export function CreateJobSheet({ open, onOpenChange }: CreateJobSheetProps) {
+export function CreateJobSheet() {
   const router = useRouter();
+  const { isOpen, closeSheet } = useSheetState();
+  const open = isOpen("create-job");
+
   const createJob = useMutation(api.jobs.create);
   const formRef = useRef<HTMLFormElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
+      closeSheet();
+    }
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -65,7 +69,7 @@ export function CreateJobSheet({ open, onOpenChange }: CreateJobSheetProps) {
         type,
         description,
       });
-      onOpenChange(false);
+      closeSheet();
       formRef.current?.reset();
       router.push(`/dashboard/jobs/${jobId}`);
     } catch (error) {
@@ -89,11 +93,7 @@ export function CreateJobSheet({ open, onOpenChange }: CreateJobSheetProps) {
   }, [open]);
 
   return (
-    <Sheet onOpenChange={onOpenChange} open={open}>
-      <SheetTrigger render={<Button />}>
-        <Plus className="size-4" />
-        Create Job
-      </SheetTrigger>
+    <Sheet onOpenChange={handleOpenChange} open={open}>
       <SheetPopup className="w-full max-w-xl" side="right">
         <SheetHeader>
           <SheetTitle>Create New Job</SheetTitle>
@@ -215,5 +215,16 @@ export function CreateJobSheet({ open, onOpenChange }: CreateJobSheetProps) {
         </SheetFooter>
       </SheetPopup>
     </Sheet>
+  );
+}
+
+export function CreateJobTrigger() {
+  const { openSheet } = useSheetState();
+
+  return (
+    <Button onClick={() => openSheet("create-job")}>
+      <Plus className="size-4" />
+      Create Job
+    </Button>
   );
 }

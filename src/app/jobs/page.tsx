@@ -3,7 +3,7 @@
 import { useQuery } from "convex/react";
 import { Briefcase, Check, ChevronLeft, Clock, MapPin } from "lucide-react";
 import { useQueryState } from "nuqs";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { Markdown } from "@/components/markdown";
 import { Badge } from "@/components/ui/badge";
@@ -20,8 +20,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useSheetState } from "@/hooks/use-sheet-state";
 import { cn } from "@/lib/utils";
-import { ApplySheet } from "./_components/apply-sheet";
+import { ApplySheet, ApplyTrigger } from "./_components/apply-sheet";
 
 const jobTypeBadgeVariant = {
   "full-time": "default",
@@ -44,7 +45,7 @@ export default function JobsPage() {
     "applied-jobs",
     []
   );
-  const [applySheetOpen, setApplySheetOpen] = useState(false);
+  const { closeSheet } = useSheetState();
 
   useEffect(() => {
     if (
@@ -64,6 +65,7 @@ export default function JobsPage() {
     if (selectedJobId) {
       setAppliedJobs((prev) => [...prev, selectedJobId]);
     }
+    closeSheet();
   };
 
   const renderApplyButton = (fullWidth = false) => {
@@ -88,15 +90,7 @@ export default function JobsPage() {
       );
     }
 
-    return (
-      <Button
-        className={className}
-        onClick={() => setApplySheetOpen(true)}
-        size="lg"
-      >
-        Apply Now
-      </Button>
-    );
+    return <ApplyTrigger className={className} fullWidth={fullWidth} />;
   };
 
   return (
@@ -362,9 +356,7 @@ export default function JobsPage() {
           company={selectedJob.company}
           jobId={selectedJob._id as Id<"jobs">}
           jobTitle={selectedJob.title}
-          onOpenChange={setApplySheetOpen}
           onSuccess={handleApplySuccess}
-          open={applySheetOpen}
         />
       )}
     </div>

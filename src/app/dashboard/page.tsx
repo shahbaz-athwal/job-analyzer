@@ -1,19 +1,15 @@
 "use client";
 
 import { useQuery } from "convex/react";
-import { useState } from "react";
 import { api } from "@/convex/_generated/api";
-import { CreateJobSheet } from "./_components/create-job-sheet";
-import { DashboardStats } from "./_components/dashboard-stats";
+import {
+  CreateJobSheet,
+  CreateJobTrigger,
+} from "./_components/create-job-sheet";
 import { JobsList } from "./_components/jobs-list";
 
 export default function DashboardPage() {
   const jobs = useQuery(api.jobs.listAll);
-  const [sheetOpen, setSheetOpen] = useState(false);
-
-  const totalApplicants =
-    jobs?.reduce((acc, job) => acc + job.applicationCount, 0) ?? 0;
-  const openJobs = jobs?.filter((j) => j.isOpen).length ?? 0;
 
   return (
     <div className="container mx-auto max-w-6xl px-4 py-8">
@@ -26,16 +22,11 @@ export default function DashboardPage() {
             Manage job postings and review applicants.
           </p>
         </div>
-        <CreateJobSheet onOpenChange={setSheetOpen} open={sheetOpen} />
+        <CreateJobTrigger />
       </div>
 
-      <DashboardStats
-        openJobs={openJobs}
-        totalApplicants={totalApplicants}
-        totalJobs={jobs?.length}
-      />
-
-      <JobsList jobs={jobs} onCreateClick={() => setSheetOpen(true)} />
+      <JobsList jobs={jobs} />
+      <CreateJobSheet />
     </div>
   );
 }

@@ -1,15 +1,18 @@
+"use client";
+
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import type { FunctionReturnType } from "convex/server";
 import { ArrowRight, Briefcase, Plus, Users } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Empty,
   EmptyDescription,
@@ -17,8 +20,18 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { Frame } from "@/components/ui/frame";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { api } from "@/convex/_generated/api";
+import { useSheetState } from "@/hooks/use-sheet-state";
 
 type Job = FunctionReturnType<typeof api.jobs.listAll>[number];
 
@@ -31,8 +44,9 @@ const jobTypeLabel = {
 
 interface JobsListProps {
   jobs: Job[] | undefined;
-  onCreateClick: () => void;
 }
+
+const columnHelper = createColumnHelper<Job>();
 
 function JobsListSkeleton() {
   return (
@@ -53,7 +67,9 @@ function JobsListSkeleton() {
   );
 }
 
-function JobsListEmpty({ onCreateClick }: { onCreateClick: () => void }) {
+function JobsListEmpty() {
+  const { openSheet } = useSheetState();
+
   return (
     <Empty>
       <EmptyHeader>
@@ -65,7 +81,7 @@ function JobsListEmpty({ onCreateClick }: { onCreateClick: () => void }) {
           Create your first posting to get started!
         </EmptyDescription>
       </EmptyHeader>
-      <Button onClick={onCreateClick}>
+      <Button onClick={() => openSheet("create-job")}>
         <Plus className="size-4" />
         Create Job
       </Button>
@@ -106,26 +122,131 @@ function JobItem({ job }: { job: Job }) {
   );
 }
 
-export function JobsList({ jobs, onCreateClick }: JobsListProps) {
+function JobsTable({ jobs }: { jobs: Job[] }) {
+  const router = useRouter();
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("title", {
+        header: "Title",
+        cell: (info) => (
+          <div className="flex items-center gap-2">
+            <span className="font-medium">{info.getValue()}</span>
+            {!info.row.original.isOpen && (
+              <Badge size="sm" variant="outline">
+                Closed
+              </Badge>
+            )}
+          </div>
+        ),
+      }),
+      columnHelper.accessor("company", {
+        header: "Company",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("type", {
+        header: "Type",
+        cell: (info) => jobTypeLabel[info.getValue()],
+      }),
+      columnHelper.accessor("location", {
+        header: "Location",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("applicationCount", {
+        header: "Applicants",
+        cell: (info) => (
+          <div className="flex items-center gap-1.5">
+            <Users className="size-4 text-muted-foreground" />
+            {info.getValue()}
+          </div>
+        ),
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: "",
+        cell: () => (
+          <div className="flex justify-end">
+            <ArrowRight className="size-4 text-muted-foreground" />
+          </div>
+        ),
+      }),
+    ],
+    []
+  );
+
+  const table = useReactTable({
+    data: jobs,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>All Jobs</CardTitle>
-        <CardDescription>
+    <Frame className="w-full">
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows.map((row) => (
+            <TableRow
+              className="cursor-pointer"
+              key={row.id}
+              onClick={() => router.push(`/dashboard/jobs/${row.original._id}`)}
+            >
+              {row.getVisibleCells().map((cell) => (
+                <TableCell key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Frame>
+  );
+}
+
+export function JobsList({ jobs }: JobsListProps) {
+  return (
+    <div>
+      <div className="mb-4">
+        <h2 className="font-semibold text-lg">All Jobs</h2>
+        <p className="text-muted-foreground text-sm">
           Click on a job to view applicants and rankings.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {jobs === undefined && <JobsListSkeleton />}
-        {jobs?.length === 0 && <JobsListEmpty onCreateClick={onCreateClick} />}
-        {jobs && jobs.length > 0 && (
-          <div className="space-y-2">
+        </p>
+      </div>
+
+      {jobs === undefined && <JobsListSkeleton />}
+      {jobs?.length === 0 && <JobsListEmpty />}
+
+      {jobs && jobs.length > 0 && (
+        <>
+          {/* Desktop: Framed Table */}
+          <div className="hidden md:block">
+            <JobsTable jobs={jobs} />
+          </div>
+
+          {/* Mobile: Card list */}
+          <div className="space-y-2 md:hidden">
             {jobs.map((job) => (
               <JobItem job={job} key={job._id} />
             ))}
           </div>
-        )}
-      </CardContent>
-    </Card>
+        </>
+      )}
+    </div>
   );
 }

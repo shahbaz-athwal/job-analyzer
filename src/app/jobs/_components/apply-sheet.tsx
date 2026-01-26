@@ -24,11 +24,10 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useSheetState } from "@/hooks/use-sheet-state";
 import { cn } from "@/lib/utils";
 
 interface ApplySheetProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   jobId: Id<"jobs">;
   jobTitle: string;
   company: string;
@@ -36,13 +35,13 @@ interface ApplySheetProps {
 }
 
 export function ApplySheet({
-  open,
-  onOpenChange,
   jobId,
   jobTitle,
   company,
   onSuccess,
 }: ApplySheetProps) {
+  const { isOpen, closeSheet } = useSheetState();
+  const open = isOpen("apply");
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const submitApplication = useMutation(api.applications.submit);
 
@@ -113,7 +112,7 @@ export function ApplySheet({
         resumeFileName: uploadedFile.name,
       });
       toast.success("Application submitted successfully!");
-      onOpenChange(false);
+      closeSheet();
       formRef.current?.reset();
       setUploadedFile(null);
       onSuccess();
@@ -146,8 +145,14 @@ export function ApplySheet({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [open]);
 
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
+      closeSheet();
+    }
+  };
+
   return (
-    <Sheet onOpenChange={onOpenChange} open={open}>
+    <Sheet onOpenChange={handleOpenChange} open={open}>
       <SheetPopup className="w-full max-w-lg" side="right">
         <SheetHeader>
           <SheetTitle>Apply for {jobTitle}</SheetTitle>
@@ -298,5 +303,30 @@ export function ApplySheet({
         </SheetFooter>
       </SheetPopup>
     </Sheet>
+  );
+}
+
+interface ApplyTriggerProps {
+  disabled?: boolean;
+  className?: string;
+  fullWidth?: boolean;
+}
+
+export function ApplyTrigger({
+  disabled,
+  className,
+  fullWidth,
+}: ApplyTriggerProps) {
+  const { openSheet } = useSheetState();
+
+  return (
+    <Button
+      className={fullWidth ? cn("w-full", className) : className}
+      disabled={disabled}
+      onClick={() => openSheet("apply")}
+      size="lg"
+    >
+      Apply Now
+    </Button>
   );
 }
