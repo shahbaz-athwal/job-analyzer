@@ -111,7 +111,6 @@ export function ApplySheet({
         resumeFileId: uploadedFile.storageId,
         resumeFileName: uploadedFile.name,
       });
-      toast.success("Application submitted successfully!");
       closeSheet();
       formRef.current?.reset();
       setUploadedFile(null);
