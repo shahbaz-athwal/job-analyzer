@@ -28,6 +28,24 @@ ${resumeText}
 4. List any gaps or missing qualifications
 5. List specific skills from the job description that appear in their resume
 6. List specific required skills that are missing from their resume
+7. Convert the resume to well-formatted markdown and add highlight markers around relevant content
+
+## Highlight Marker Format
+Use this exact syntax to mark highlighted content in the resume markdown:
+- {{skill}}text{{/skill}} - For matched skills (skills that match job requirements)
+- {{exp}}text{{/exp}} - For relevant work experience and responsibilities
+- {{edu}}text{{/edu}} - For relevant education, certifications, or training
+- {{ach}}text{{/ach}} - For key achievements, metrics, or accomplishments
+
+## Resume Markdown Guidelines
+- Format the resume as clean, readable markdown with proper headings (##, ###)
+- Preserve the original structure and content of the resume
+- Add highlight markers INLINE around the specific relevant text (not entire sections)
+- Each highlight should wrap a specific phrase or sentence, not large blocks
+- For the highlightedSections array, include EVERY highlighted item with:
+  - type: the highlight type (skill, exp, edu, ach)
+  - text: the EXACT text that appears between the markers
+  - reason: a brief explanation of why it's relevant to the job
 
 Be objective and thorough in your analysis.`;
 }

@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { HighlightedResume } from "@/components/highlighted-resume";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -325,6 +326,25 @@ export default function ApplicantDetailPage() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Highlighted Resume */}
+              {analysis.resumeMarkdown && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Resume Analysis</CardTitle>
+                    <CardDescription>
+                      Highlighted sections show relevant matches to the job
+                      requirements
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <HighlightedResume
+                      highlightedSections={analysis.highlightedSections}
+                      markdown={analysis.resumeMarkdown}
+                    />
+                  </CardContent>
+                </Card>
+              )}
             </>
           )}
 

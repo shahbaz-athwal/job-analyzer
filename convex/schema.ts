@@ -42,6 +42,22 @@ export default defineSchema({
         weaknesses: v.array(v.string()),
         matchedSkills: v.array(v.string()),
         missingSkills: v.array(v.string()),
+        // Highlighted resume in markdown format
+        resumeMarkdown: v.optional(v.string()),
+        highlightedSections: v.optional(
+          v.array(
+            v.object({
+              type: v.union(
+                v.literal("skill"),
+                v.literal("exp"),
+                v.literal("edu"),
+                v.literal("ach")
+              ),
+              text: v.string(),
+              reason: v.string(),
+            })
+          )
+        ),
       })
     ),
 
