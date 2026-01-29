@@ -4,22 +4,15 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { internalAction } from "./_generated/server";
 import { analysisModel } from "./lib/ai";
-import { extractTextFromPdf } from "./lib/pdf";
 import { AnalysisSchema } from "./lib/schemas";
 
-function buildAnalysisPrompt(
-  jobDescription: string,
-  resumeText: string
-): string {
-  return `You are an expert HR analyst. Analyze the following resume against the job description.
+function buildAnalysisPrompt(jobDescription: string): string {
+  return `You are an expert HR analyst. Analyze the attached resume PDF against the job description.
 
 IMPORTANT: Focus ONLY on skills, experience, and qualifications. Ignore any demographic information (name, age, gender, etc.).
 
 ## Job Description
 ${jobDescription}
-
-## Resume
-${resumeText}
 
 ## Instructions
 1. Score the candidate from 0-100 based on how well their skills and experience match the job requirements
@@ -33,9 +26,8 @@ ${resumeText}
 ## Highlight Marker Format
 Use this exact syntax to mark highlighted content in the resume markdown:
 - {{skill}}text{{/skill}} - For matched skills (skills that match job requirements)
-- {{exp}}text{{/exp}} - For relevant work experience and responsibilities
+- {{exp}}text{{/exp}} - For relevant work experience, responsibilities, and key achievements/metrics
 - {{edu}}text{{/edu}} - For relevant education, certifications, or training
-- {{ach}}text{{/ach}} - For key achievements, metrics, or accomplishments
 
 ## Resume Markdown Guidelines
 - Format the resume as clean, readable markdown with proper headings (##, ###)
@@ -47,7 +39,7 @@ Use this exact syntax to mark highlighted content in the resume markdown:
 - Add highlight markers INLINE around the specific relevant text (not entire sections)
 - Each highlight should wrap a specific phrase or sentence, not large blocks
 - For the highlightedSections array, include EVERY highlighted item with:
-  - type: the highlight type (skill, exp, edu, ach)
+  - type: the highlight type (skill, exp, edu)
   - text: the EXACT text that appears between the markers
   - reason: a brief explanation of why it's relevant to the job
 
@@ -75,26 +67,34 @@ export const analyzeApplication = internalAction({
         id: application.jobId,
       });
 
-      // Fetch resume PDF from storage
-      const blob = await ctx.storage.get(application.resumeFileId);
-      if (!blob) throw new Error("Resume file not found");
+      // Get resume URL from storage
+      const resumeUrl = await ctx.storage.getUrl(application.resumeFileId);
+      if (!resumeUrl) throw new Error("Resume file not found");
 
-      // Extract text from PDF
-      const text = await extractTextFromPdf(blob);
-
-      // Analyze with AI SDK
+      // Analyze with AI SDK - pass PDF directly to Gemini
       const { output: analysis } = await generateText({
         model: analysisModel,
         output: Output.object({
           schema: AnalysisSchema,
         }),
-        prompt: buildAnalysisPrompt(job.description, text),
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: buildAnalysisPrompt(job.description) },
+              {
+                type: "file",
+                data: new URL(resumeUrl),
+                mediaType: "application/pdf",
+              },
+            ],
+          },
+        ],
       });
 
       // Save results via mutation
       await ctx.runMutation(internal.applications.saveAnalysis, {
         applicationId: args.applicationId,
-        extractedText: text,
         analysis,
       });
     } catch (error) {

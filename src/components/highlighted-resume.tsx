@@ -90,7 +90,7 @@ function HighlightedMark({
     <RoughNotation
       animate
       animationDelay={index * 200}
-      animationDuration={800}
+      animationDuration={600}
       color={config.color}
       multiline={config.multiline}
       show={show}

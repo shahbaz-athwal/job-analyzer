@@ -49,7 +49,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { cn } from "@/lib/utils";
+import { cn, formatRelativeDate } from "@/lib/utils";
 
 function getScoreColor(score: number) {
   if (score >= 80) return "text-green-600 dark:text-green-400";
@@ -146,7 +146,7 @@ export default function ApplicantDetailPage() {
             </p>
             <span className="mt-2 flex items-center gap-1.5 text-muted-foreground text-sm">
               <Clock className="size-4" />
-              Applied {new Date(application.submittedAt).toLocaleDateString()}
+              Applied {formatRelativeDate(application.submittedAt)}
             </span>
           </div>
           <div className="flex items-center gap-2">

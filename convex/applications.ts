@@ -70,7 +70,6 @@ export const updateStatus = internalMutation({
 export const saveAnalysis = internalMutation({
   args: {
     applicationId: v.id("applications"),
-    extractedText: v.string(),
     analysis: v.object({
       score: v.number(),
       summary: v.string(),
@@ -97,7 +96,6 @@ export const saveAnalysis = internalMutation({
   },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.applicationId, {
-      extractedText: args.extractedText,
       analysis: args.analysis,
       status: "reviewed",
     });

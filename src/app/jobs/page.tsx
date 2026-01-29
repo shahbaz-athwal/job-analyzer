@@ -21,7 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { useSheetState } from "@/hooks/use-sheet-state";
-import { cn } from "@/lib/utils";
+import { cn, formatRelativeDate } from "@/lib/utils";
 import { ApplySheet, ApplyTrigger } from "./_components/apply-sheet";
 
 const jobTypeBadgeVariant = {
@@ -239,7 +239,7 @@ function JobsContent() {
                           </span>
                           <span className="flex items-center gap-1">
                             <Clock className="size-3" />
-                            {new Date(job.createdAt).toLocaleDateString()}
+                            {formatRelativeDate(job.createdAt)}
                           </span>
                         </div>
                       </button>
@@ -309,8 +309,7 @@ function JobsContent() {
                       </span>
                       <span className="flex items-center gap-1.5">
                         <Clock className="size-4" />
-                        Posted{" "}
-                        {new Date(selectedJob.createdAt).toLocaleDateString()}
+                        Posted {formatRelativeDate(selectedJob.createdAt)}
                       </span>
                     </div>
                   </div>
@@ -372,8 +371,7 @@ function JobsContent() {
                       </span>
                       <span className="flex items-center gap-1.5">
                         <Clock className="size-4" />
-                        Posted{" "}
-                        {new Date(selectedJob.createdAt).toLocaleDateString()}
+                        Posted {formatRelativeDate(selectedJob.createdAt)}
                       </span>
                     </div>
 
