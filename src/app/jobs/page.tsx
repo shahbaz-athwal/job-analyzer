@@ -3,7 +3,7 @@
 import { useQuery } from "convex/react";
 import { Briefcase, Check, ChevronLeft, Clock, MapPin } from "lucide-react";
 import { useQueryState } from "nuqs";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { Markdown } from "@/components/markdown";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +23,6 @@ import type { Id } from "@/convex/_generated/dataModel";
 import { useSheetState } from "@/hooks/use-sheet-state";
 import { cn } from "@/lib/utils";
 import { ApplySheet, ApplyTrigger } from "./_components/apply-sheet";
-import { SuccessCelebration } from "./_components/success-celebration";
 
 const jobTypeBadgeVariant = {
   "full-time": "default",
@@ -93,11 +92,6 @@ function JobsContent() {
     []
   );
   const { closeSheet } = useSheetState();
-  const [showCelebration, setShowCelebration] = useState(false);
-  const [celebrationJob, setCelebrationJob] = useState<{
-    title: string;
-    company: string;
-  } | null>(null);
 
   useEffect(() => {
     if (
@@ -114,20 +108,10 @@ function JobsContent() {
   const isApplied = selectedJobId ? appliedJobs.includes(selectedJobId) : false;
 
   const handleApplySuccess = () => {
-    if (selectedJobId && selectedJob) {
+    if (selectedJobId && process.env.NODE_ENV !== "development") {
       setAppliedJobs((prev) => [...prev, selectedJobId]);
-      setCelebrationJob({
-        title: selectedJob.title,
-        company: selectedJob.company,
-      });
-      setShowCelebration(true);
     }
     closeSheet();
-  };
-
-  const handleCelebrationClose = () => {
-    setShowCelebration(false);
-    setCelebrationJob(null);
   };
 
   const renderApplyButton = (fullWidth = false) => {
@@ -419,15 +403,6 @@ function JobsContent() {
           jobId={selectedJob._id as Id<"jobs">}
           jobTitle={selectedJob.title}
           onSuccess={handleApplySuccess}
-        />
-      )}
-
-      {/* Success Celebration */}
-      {showCelebration && celebrationJob && (
-        <SuccessCelebration
-          company={celebrationJob.company}
-          jobTitle={celebrationJob.title}
-          onClose={handleCelebrationClose}
         />
       )}
     </div>
