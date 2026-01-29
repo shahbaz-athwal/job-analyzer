@@ -35,12 +35,14 @@ const HIGHLIGHT_CONFIG: Record<
     type: "underline",
     color: "#3B82F6", // Blue
     label: "Relevant Experience",
+    multiline: true,
     strokeWidth: 2,
   },
   edu: {
     type: "box",
     color: "#22C55E", // Green
     label: "Education",
+    multiline: true,
     strokeWidth: 2,
   },
 };

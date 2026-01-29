@@ -113,9 +113,9 @@ export default function ApplicantDetailPage() {
   const { analysis, job } = application;
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left Half */}
-      <div className="w-full overflow-y-auto p-8 lg:w-1/2">
+    <div className="flex h-screen overflow-hidden">
+      {/* Left Side - 55% */}
+      <div className="w-full overflow-y-auto p-8 lg:w-[60%]">
         <Breadcrumb className="mb-6">
           <BreadcrumbList>
             <BreadcrumbItem>
