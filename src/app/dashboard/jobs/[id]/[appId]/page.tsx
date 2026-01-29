@@ -113,92 +113,93 @@ export default function ApplicantDetailPage() {
   const { analysis, job } = application;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Breadcrumb className="mb-6">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink render={<Link href="/dashboard" />}>
-              All Jobs
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink render={<Link href={`/dashboard/jobs/${jobId}`} />}>
-              {job?.title ?? "Job"}
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{application.name}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+    <div className="flex min-h-screen">
+      {/* Left Half */}
+      <div className="w-full overflow-y-auto p-8 lg:w-1/2">
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink render={<Link href="/dashboard" />}>
+                All Jobs
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                render={<Link href={`/dashboard/jobs/${jobId}`} />}
+              >
+                {job?.title ?? "Job"}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{application.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
 
-      {/* Applicant Header */}
-      <div className="mb-8">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
+        {/* Applicant Header */}
+        <div className="mb-8">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <h1 className="font-bold text-2xl tracking-tight">
               {application.name}
             </h1>
-            <p className="mt-1 text-muted-foreground">
-              Applied for {job?.title} at {job?.company}
-            </p>
-            <span className="mt-2 flex items-center gap-1.5 text-muted-foreground text-sm">
-              <Clock className="size-4" />
-              Applied {formatRelativeDate(application.submittedAt)}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
-                  <a href={`mailto:${application.email}`} />
-                }
-              >
-                <Button size="icon" variant="outline">
-                  <Mail className="size-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipPopup>{application.email}</TooltipPopup>
-            </Tooltip>
-            {application.phone && (
+            <div className="flex items-center gap-2">
               <Tooltip>
                 <TooltipTrigger
                   render={
                     // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
-                    <a href={`tel:${application.phone}`} />
+                    <a href={`mailto:${application.email}`} />
                   }
                 >
                   <Button size="icon" variant="outline">
-                    <Phone className="size-4" />
+                    <Mail className="size-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipPopup>{application.phone}</TooltipPopup>
+                <TooltipPopup>{application.email}</TooltipPopup>
               </Tooltip>
-            )}
-            {application.resumeUrl && (
-              <Button
-                render={
-                  // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
-                  <a
-                    href={application.resumeUrl}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  />
-                }
-              >
-                <Download className="size-4" />
-                Download Resume
-              </Button>
-            )}
+              {application.phone && (
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
+                      <a href={`tel:${application.phone}`} />
+                    }
+                  >
+                    <Button size="icon" variant="outline">
+                      <Phone className="size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipPopup>{application.phone}</TooltipPopup>
+                </Tooltip>
+              )}
+              {application.resumeUrl && (
+                <Button
+                  render={
+                    // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
+                    <a
+                      href={application.resumeUrl}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    />
+                  }
+                >
+                  <Download className="size-4" />
+                  Download Resume
+                </Button>
+              )}
+            </div>
           </div>
+          <p className="mt-1 text-muted-foreground">
+            Applied for {job?.title} at {job?.company}
+          </p>
+          <span className="mt-2 flex items-center gap-1.5 text-muted-foreground text-sm">
+            <Clock className="size-4" />
+            Applied {formatRelativeDate(application.submittedAt)}
+          </span>
         </div>
-      </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Left Column - Analysis */}
+        {/* Analysis Content */}
         <div className="space-y-6">
           {/* Score Card */}
           {application.status === "processing" && (
@@ -320,26 +321,20 @@ export default function ApplicantDetailPage() {
             </Card>
           )}
         </div>
-
-        {/* Right Column - Highlighted Resume */}
-        {application.status === "reviewed" && analysis?.resumeMarkdown && (
-          <div className="lg:sticky lg:top-8 lg:self-start">
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-bold text-2xl">
-                  Resume Analysis
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <HighlightedResume
-                  highlightedSections={analysis.highlightedSections}
-                  markdown={analysis.resumeMarkdown}
-                />
-              </CardContent>
-            </Card>
-          </div>
-        )}
       </div>
+
+      {/* Right Half - Highlighted Resume */}
+      {application.status === "reviewed" && analysis?.resumeMarkdown && (
+        <div className="hidden border-l bg-muted/30 lg:block lg:w-1/2">
+          <div className="sticky top-0 h-screen overflow-y-auto p-8">
+            <h2 className="mb-6 font-bold text-2xl">Resume Analysis</h2>
+            <HighlightedResume
+              highlightedSections={analysis.highlightedSections}
+              markdown={analysis.resumeMarkdown}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
