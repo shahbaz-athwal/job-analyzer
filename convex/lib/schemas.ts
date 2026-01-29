@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 // Highlight types for annotating resume content
-export const HighlightType = z.enum(["skill", "exp", "edu", "ach"]);
+export const HighlightType = z.enum(["skill", "exp", "edu"]);
 
 export const HighlightedSectionSchema = z.object({
   type: HighlightType.describe(
-    "Type of highlight: skill (matched skill), exp (relevant experience), edu (relevant education), ach (key achievement)"
+    "Type of highlight: skill (matched skill), exp (relevant experience), edu (relevant education)"
   ),
   text: z
     .string()

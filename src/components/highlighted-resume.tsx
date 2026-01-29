@@ -43,19 +43,13 @@ const HIGHLIGHT_CONFIG: Record<
     label: "Education",
     strokeWidth: 2,
   },
-  ach: {
-    type: "circle",
-    color: "#A855F7", // Purple
-    label: "Achievement",
-    strokeWidth: 2,
-  },
 };
 
 // Regex to match highlight markers
-const HIGHLIGHT_REGEX = /\{\{(skill|exp|edu|ach)\}\}([\s\S]*?)\{\{\/\1\}\}/g;
+const HIGHLIGHT_REGEX = /\{\{(skill|exp|edu)\}\}([\s\S]*?)\{\{\/\1\}\}/g;
 
 interface HighlightedSection {
-  type: "skill" | "exp" | "edu" | "ach";
+  type: "skill" | "exp" | "edu";
   text: string;
   reason: string;
 }
@@ -64,7 +58,6 @@ interface HighlightedResumeProps {
   markdown: string;
   highlightedSections?: HighlightedSection[];
   className?: string;
-  showLegend?: boolean;
   animationDelay?: number;
 }
 
@@ -108,29 +101,10 @@ function HighlightedMark({
   );
 }
 
-// Legend component showing highlight types
-function HighlightLegend() {
-  return (
-    <div className="mb-4 flex flex-wrap gap-4 rounded-lg border bg-muted/50 p-3">
-      <span className="font-medium text-muted-foreground text-sm">Legend:</span>
-      {Object.entries(HIGHLIGHT_CONFIG).map(([key, config]) => (
-        <div className="flex items-center gap-2" key={key}>
-          <span
-            className="size-3 rounded-sm"
-            style={{ backgroundColor: config.color }}
-          />
-          <span className="text-sm">{config.label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 export function HighlightedResume({
   markdown,
   highlightedSections = [],
   className,
-  showLegend = true,
   animationDelay = 500,
 }: HighlightedResumeProps) {
   const [showAnnotations, setShowAnnotations] = useState(false);
@@ -194,7 +168,6 @@ export function HighlightedResume({
 
   return (
     <div className={className}>
-      {showLegend && <HighlightLegend />}
       <RoughNotationGroup show={showAnnotations}>
         <div
           className={cn(

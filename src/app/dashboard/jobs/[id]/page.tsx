@@ -24,6 +24,14 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Markdown } from "@/components/markdown";
 import { Badge } from "@/components/ui/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -133,13 +141,19 @@ export default function JobDetailDashboardPage() {
 
   return (
     <div className="container mx-auto max-w-6xl px-4 py-8">
-      <Link
-        className="mb-6 inline-flex items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-foreground"
-        href="/dashboard"
-      >
-        <ArrowLeft className="size-4" />
-        Back to dashboard
-      </Link>
+      <Breadcrumb className="mb-6">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink render={<Link href="/dashboard" />}>
+              All Jobs
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{job.title}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
 
       {/* Job Header */}
       <div className="mb-8 flex flex-wrap items-start justify-between gap-4">

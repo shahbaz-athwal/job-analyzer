@@ -50,8 +50,7 @@ export default defineSchema({
               type: v.union(
                 v.literal("skill"),
                 v.literal("exp"),
-                v.literal("edu"),
-                v.literal("ach")
+                v.literal("edu")
               ),
               text: v.string(),
               reason: v.string(),

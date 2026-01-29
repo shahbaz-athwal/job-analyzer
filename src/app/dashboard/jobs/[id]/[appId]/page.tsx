@@ -19,6 +19,14 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { HighlightedResume } from "@/components/highlighted-resume";
 import { Badge } from "@/components/ui/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -107,13 +115,25 @@ export default function ApplicantDetailPage() {
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">
-      <Link
-        className="mb-6 inline-flex items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-foreground"
-        href={`/dashboard/jobs/${jobId}`}
-      >
-        <ArrowLeft className="size-4" />
-        Back to applicants
-      </Link>
+      <Breadcrumb className="mb-6">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink render={<Link href="/dashboard" />}>
+              All Jobs
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink render={<Link href={`/dashboard/jobs/${jobId}`} />}>
+              {job?.title ?? "Job"}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{application.name}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
 
       {/* Applicant Header */}
       <div className="mb-8">
@@ -232,59 +252,6 @@ export default function ApplicantDetailPage() {
                   </p>
                 </CardContent>
               </Card>
-
-              {/* Strengths & Weaknesses */}
-              <div className="grid gap-6 sm:grid-cols-2">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                      <CheckCircle2 className="size-5 text-green-500" />
-                      Strengths
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {analysis.strengths.map((strength) => (
-                        <li
-                          className="flex items-start gap-2 text-sm"
-                          key={strength}
-                        >
-                          <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-green-500" />
-                          {strength}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                      <XCircle className="size-5 text-red-500" />
-                      Areas of Concern
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {analysis.weaknesses.length > 0 ? (
-                        analysis.weaknesses.map((weakness) => (
-                          <li
-                            className="flex items-start gap-2 text-sm"
-                            key={weakness}
-                          >
-                            <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-red-500" />
-                            {weakness}
-                          </li>
-                        ))
-                      ) : (
-                        <li className="text-muted-foreground text-sm">
-                          No major concerns identified
-                        </li>
-                      )}
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
 
               {/* Skills */}
               <Card>
