@@ -7,8 +7,6 @@ import {
   CheckCircle2,
   Clock,
   Download,
-  ExternalLink,
-  FileText,
   Loader2,
   Mail,
   Phone,
@@ -48,6 +46,7 @@ import {
   ProgressTrack,
 } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
@@ -114,7 +113,7 @@ export default function ApplicantDetailPage() {
   const { analysis, job } = application;
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -145,50 +144,61 @@ export default function ApplicantDetailPage() {
             <p className="mt-1 text-muted-foreground">
               Applied for {job?.title} at {job?.company}
             </p>
+            <span className="mt-2 flex items-center gap-1.5 text-muted-foreground text-sm">
+              <Clock className="size-4" />
+              Applied {new Date(application.submittedAt).toLocaleDateString()}
+            </span>
           </div>
-          {application.resumeUrl && (
-            <Button
-              render={
-                // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
-                <a
-                  href={application.resumeUrl}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                />
-              }
-              variant="outline"
-            >
-              <Download className="size-4" />
-              Download Resume
-            </Button>
-          )}
-        </div>
-
-        <div className="mt-4 flex flex-wrap items-center gap-4">
-          <a
-            className="flex items-center gap-1.5 text-muted-foreground text-sm transition-colors hover:text-foreground"
-            href={`mailto:${application.email}`}
-          >
-            <Mail className="size-4" />
-            {application.email}
-          </a>
-          {application.phone && (
-            <a
-              className="flex items-center gap-1.5 text-muted-foreground text-sm transition-colors hover:text-foreground"
-              href={`tel:${application.phone}`}
-            >
-              <Phone className="size-4" />
-              {application.phone}
-            </a>
-          )}
-          <span className="flex items-center gap-1.5 text-muted-foreground text-sm">
-            <Clock className="size-4" />
-            Applied {new Date(application.submittedAt).toLocaleDateString()}
-          </span>
+          <div className="flex items-center gap-2">
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
+                  <a href={`mailto:${application.email}`} />
+                }
+              >
+                <Button size="icon" variant="outline">
+                  <Mail className="size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipPopup>{application.email}</TooltipPopup>
+            </Tooltip>
+            {application.phone && (
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
+                    <a href={`tel:${application.phone}`} />
+                  }
+                >
+                  <Button size="icon" variant="outline">
+                    <Phone className="size-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipPopup>{application.phone}</TooltipPopup>
+              </Tooltip>
+            )}
+            {application.resumeUrl && (
+              <Button
+                render={
+                  // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
+                  <a
+                    href={application.resumeUrl}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  />
+                }
+              >
+                <Download className="size-4" />
+                Download Resume
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Left Column - Analysis */}
         <div className="space-y-6">
           {/* Score Card */}
           {application.status === "processing" && (
@@ -293,25 +303,6 @@ export default function ApplicantDetailPage() {
                   </div>
                 </CardContent>
               </Card>
-
-              {/* Highlighted Resume */}
-              {analysis.resumeMarkdown && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base">Resume Analysis</CardTitle>
-                    <CardDescription>
-                      Highlighted sections show relevant matches to the job
-                      requirements
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <HighlightedResume
-                      highlightedSections={analysis.highlightedSections}
-                      markdown={analysis.resumeMarkdown}
-                    />
-                  </CardContent>
-                </Card>
-              )}
             </>
           )}
 
@@ -330,71 +321,24 @@ export default function ApplicantDetailPage() {
           )}
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <FileText className="size-4" />
-                Resume
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-3 text-muted-foreground text-sm">
-                {application.resumeFileName}
-              </p>
-              {application.resumeUrl && (
-                <Button
-                  className="w-full"
-                  render={
-                    // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
-                    <a
-                      href={application.resumeUrl}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    />
-                  }
-                  variant="outline"
-                >
-                  <ExternalLink className="size-4" />
-                  View Resume
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Contact Applicant</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <Button
-                className="w-full"
-                render={
-                  // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
-                  <a href={`mailto:${application.email}`} />
-                }
-                variant="outline"
-              >
-                <Mail className="size-4" />
-                Send Email
-              </Button>
-              {application.phone && (
-                <Button
-                  className="w-full"
-                  render={
-                    // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
-                    <a href={`tel:${application.phone}`} />
-                  }
-                  variant="outline"
-                >
-                  <Phone className="size-4" />
-                  Call
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+        {/* Right Column - Highlighted Resume */}
+        {application.status === "reviewed" && analysis?.resumeMarkdown && (
+          <div className="lg:sticky lg:top-8 lg:self-start">
+            <Card>
+              <CardHeader>
+                <CardTitle className="font-bold text-2xl">
+                  Resume Analysis
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <HighlightedResume
+                  highlightedSections={analysis.highlightedSections}
+                  markdown={analysis.resumeMarkdown}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Components } from "react-markdown";
 import ReactMarkdown from "react-markdown";
 import {
@@ -76,18 +76,21 @@ function HighlightedMark({
   type,
   show,
   reason,
+  index,
 }: {
   children: React.ReactNode;
   type: string;
   show: boolean;
   reason?: string;
+  index: number;
 }) {
   const config = HIGHLIGHT_CONFIG[type] || HIGHLIGHT_CONFIG.skill;
 
   return (
     <RoughNotation
       animate
-      animationDuration={400}
+      animationDelay={index * 200}
+      animationDuration={800}
       color={config.color}
       multiline={config.multiline}
       show={show}
@@ -108,6 +111,7 @@ export function HighlightedResume({
   animationDelay = 500,
 }: HighlightedResumeProps) {
   const [showAnnotations, setShowAnnotations] = useState(false);
+  const highlightIndexRef = useRef(0);
 
   // Build a map of highlighted text to reasons
   const highlightReasons = useMemo(() => {
@@ -133,6 +137,11 @@ export function HighlightedResume({
     return () => clearTimeout(timer);
   }, [animationDelay]);
 
+  // Reset highlight index counter when markdown changes or annotations are toggled
+  useEffect(() => {
+    highlightIndexRef.current = 0;
+  }, [processedMarkdown, showAnnotations]);
+
   // Create custom markdown components
   const components: Components = useMemo(
     () => ({
@@ -152,8 +161,11 @@ export function HighlightedResume({
         }
         const reason = highlightReasons.get(textContent);
 
+        const currentIndex = highlightIndexRef.current++;
+
         return (
           <HighlightedMark
+            index={currentIndex}
             reason={reason}
             show={showAnnotations}
             type={highlightType}

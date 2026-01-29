@@ -39,6 +39,10 @@ Use this exact syntax to mark highlighted content in the resume markdown:
 
 ## Resume Markdown Guidelines
 - Format the resume as clean, readable markdown with proper headings (##, ###)
+- CRITICAL: Each bullet point MUST be on its own line starting with "- " (hyphen and space)
+- Add a blank line before starting a bullet list
+- Do NOT combine multiple bullet points into a single paragraph
+- Convert em-dashes (–) or other bullet characters to standard markdown hyphens (-)
 - Preserve the original structure and content of the resume
 - Add highlight markers INLINE around the specific relevant text (not entire sections)
 - Each highlight should wrap a specific phrase or sentence, not large blocks
