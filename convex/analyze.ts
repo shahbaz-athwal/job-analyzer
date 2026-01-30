@@ -16,10 +16,16 @@ ${jobDescription}
 
 ## Instructions
 1. Score the candidate from 0-100 based on how well their skills and experience match the job requirements
-2. Provide 3-4 concise bullet points summarizing the candidate's fit (include both positives and areas of concern)
-3. List specific skills from the job description that appear in their resume
-4. List specific required skills that are missing from their resume
-5. Convert the resume to well-formatted markdown and add highlight markers around relevant content
+2. Provide 1-2 KEY STRENGTHS: What makes this candidate a good fit? Use **bold** for the most important phrase.
+3. Provide 1-2 RISKS/CONCERNS: What gaps or concerns exist? Use **bold** for the key issue.
+4. List specific skills from the job description that appear in their resume
+5. List specific required skills that are missing from their resume
+6. Convert the resume to well-formatted markdown and add highlight markers around relevant content
+
+## Writing Style for Strengths and Risks
+- Keep each point to 1-2 sentences max
+- **Bold** the key phrase a recruiter would want to skim (e.g., "**5+ years of Python experience**" or "**No cloud experience**")
+- Be specific and quantify when possible
 
 ## Highlight Marker Format
 Use this exact syntax to mark highlighted content in the resume markdown:
@@ -29,6 +35,7 @@ Use this exact syntax to mark highlighted content in the resume markdown:
 
 ## Resume Markdown Guidelines
 - Format the resume as clean, readable markdown with proper headings (##, ###)
+- DO NOT include any name, location, or contact information in the resume markdown
 - CRITICAL: Each bullet point MUST be on its own line starting with "- " (hyphen and space)
 - Add a blank line before starting a bullet list
 - Do NOT combine multiple bullet points into a single paragraph

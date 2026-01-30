@@ -72,7 +72,8 @@ export const saveAnalysis = internalMutation({
     applicationId: v.id("applications"),
     analysis: v.object({
       score: v.number(),
-      summaryPoints: v.array(v.string()),
+      strengths: v.array(v.string()),
+      risks: v.array(v.string()),
       matchedSkills: v.array(v.string()),
       missingSkills: v.array(v.string()),
       // Highlighted resume content

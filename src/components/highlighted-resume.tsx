@@ -1,5 +1,6 @@
 "use client";
 
+import { FileText } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Components } from "react-markdown";
 import ReactMarkdown from "react-markdown";
@@ -9,6 +10,7 @@ import {
   type types,
 } from "react-rough-notation";
 import rehypeRaw from "rehype-raw";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 // Type alias for rough notation types
@@ -112,6 +114,7 @@ export function HighlightedResume({
   className,
   animationDelay = 500,
 }: HighlightedResumeProps) {
+  const [isRevealed, setIsRevealed] = useState(false);
   const [showAnnotations, setShowAnnotations] = useState(false);
   const highlightIndexRef = useRef(0);
 
@@ -130,14 +133,16 @@ export function HighlightedResume({
     [markdown]
   );
 
-  // Start animations after a delay
+  // Start annotations only after reveal
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowAnnotations(true);
-    }, animationDelay);
+    if (isRevealed) {
+      const timer = setTimeout(() => {
+        setShowAnnotations(true);
+      }, animationDelay);
 
-    return () => clearTimeout(timer);
-  }, [animationDelay]);
+      return () => clearTimeout(timer);
+    }
+  }, [isRevealed, animationDelay]);
 
   // Reset highlight index counter when markdown changes or annotations are toggled
   useEffect(() => {
@@ -181,21 +186,43 @@ export function HighlightedResume({
   );
 
   return (
-    <div className={className}>
-      <RoughNotationGroup show={showAnnotations}>
-        <div
-          className={cn(
-            "prose prose-sm dark:prose-invert max-w-none",
-            "prose-li:my-0.5 prose-ol:my-2 prose-p:my-2 prose-ul:my-2",
-            "prose-headings:mt-4 prose-headings:mb-2 prose-headings:font-semibold",
-            "prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
-          )}
-        >
-          <ReactMarkdown components={components} rehypePlugins={[rehypeRaw]}>
-            {processedMarkdown}
-          </ReactMarkdown>
+    <div className={cn("relative", className)}>
+      {/* Resume content with conditional blur */}
+      <div
+        className={cn(
+          "transition-all duration-500",
+          !isRevealed && "select-none blur-md"
+        )}
+      >
+        <RoughNotationGroup show={showAnnotations}>
+          <div
+            className={cn(
+              "prose prose-sm dark:prose-invert max-w-none",
+              "prose-li:my-0.5 prose-ol:my-2 prose-p:my-2 prose-ul:my-2",
+              "prose-headings:mt-4 prose-headings:mb-2 prose-headings:font-semibold",
+              "prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
+            )}
+          >
+            <ReactMarkdown components={components} rehypePlugins={[rehypeRaw]}>
+              {processedMarkdown}
+            </ReactMarkdown>
+          </div>
+        </RoughNotationGroup>
+      </div>
+
+      {/* Overlay with reveal button - positioned in upper visible area */}
+      {!isRevealed && (
+        <div className="absolute inset-x-0 top-48 flex justify-center">
+          <Button
+            className="shadow-lg"
+            onClick={() => setIsRevealed(true)}
+            size="lg"
+          >
+            <FileText className="size-4" />
+            Show Resume Analysis
+          </Button>
         </div>
-      </RoughNotationGroup>
+      )}
     </div>
   );
 }

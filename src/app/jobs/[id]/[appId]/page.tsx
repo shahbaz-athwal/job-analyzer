@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import type React from "react";
 import { HighlightedResume } from "@/components/highlighted-resume";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -129,6 +130,25 @@ function getScoreLabel(score: number) {
   if (score >= 60) return "Good Match";
   if (score >= 40) return "Partial Match";
   return "Low Match";
+}
+
+// Parse **bold** markdown syntax into React elements
+function parseBoldText(text: string): React.ReactNode[] {
+  const parts = text.split(/(\*\*.+?\*\*)/g);
+  return parts.map((part) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      const content = part.slice(2, -2);
+      return (
+        <strong
+          className="font-semibold text-foreground"
+          key={`bold-${content}`}
+        >
+          {content}
+        </strong>
+      );
+    }
+    return part;
+  });
 }
 
 export default function ApplicantDetailPage() {
@@ -333,9 +353,12 @@ export default function ApplicantDetailPage() {
             <>
               {/* Match Score Section */}
               <section>
-                <div className="flex items-center gap-6">
-                  <CircularProgress value={analysis.score} />
-                  <div className="flex-1 pt-2">
+                <div className="flex items-start gap-6">
+                  <CircularProgress
+                    className="shrink-0"
+                    value={analysis.score}
+                  />
+                  <div className="max-w-prose flex-1 space-y-4 pt-2">
                     <p
                       className={cn(
                         "font-semibold text-lg",
@@ -344,14 +367,40 @@ export default function ApplicantDetailPage() {
                     >
                       {getScoreLabel(analysis.score)}
                     </p>
-                    <ul className="mt-3 space-y-1.5 text-muted-foreground text-sm leading-relaxed">
-                      {analysis.summaryPoints.map((point: string) => (
-                        <li className="flex gap-2" key={point}>
-                          <span className="text-muted-foreground/60">•</span>
-                          <span>{point}</span>
-                        </li>
-                      ))}
-                    </ul>
+
+                    {/* Strengths */}
+                    {analysis.strengths && analysis.strengths.length > 0 && (
+                      <div>
+                        <p className="mb-2 font-medium text-green-700 text-xs uppercase tracking-wide dark:text-green-400">
+                          Why this score
+                        </p>
+                        <ul className="space-y-1.5 text-muted-foreground text-sm leading-relaxed">
+                          {analysis.strengths.map((point: string) => (
+                            <li className="flex gap-2" key={point}>
+                              <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-green-500" />
+                              <span>{parseBoldText(point)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Risks */}
+                    {analysis.risks && analysis.risks.length > 0 && (
+                      <div>
+                        <p className="mb-2 font-medium text-amber-700 text-xs uppercase tracking-wide dark:text-amber-400">
+                          Risks
+                        </p>
+                        <ul className="space-y-1.5 text-muted-foreground text-sm leading-relaxed">
+                          {analysis.risks.map((point: string) => (
+                            <li className="flex gap-2" key={point}>
+                              <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-500" />
+                              <span>{parseBoldText(point)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 </div>
               </section>
@@ -432,7 +481,6 @@ export default function ApplicantDetailPage() {
       {application.status === "reviewed" && analysis?.resumeMarkdown && (
         <div className="hidden border-l bg-muted/30 lg:block lg:w-1/2">
           <div className="sticky top-0 h-screen overflow-y-auto p-8">
-            <h2 className="mb-6 font-bold text-2xl">Resume Analysis</h2>
             <HighlightedResume
               highlightedSections={analysis.highlightedSections}
               markdown={analysis.resumeMarkdown}

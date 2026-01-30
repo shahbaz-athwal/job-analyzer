@@ -15,11 +15,20 @@ export const HighlightedSectionSchema = z.object({
 
 export const AnalysisSchema = z.object({
   score: z.number().min(0).max(100).describe("Match score from 0-100"),
-  summaryPoints: z
+  strengths: z
     .array(z.string())
-    .min(3)
-    .max(4)
-    .describe("3-4 concise bullet points summarizing candidate fit"),
+    .min(1)
+    .max(2)
+    .describe(
+      "1-2 key strengths. Use **bold** markdown for the most important phrase in each point."
+    ),
+  risks: z
+    .array(z.string())
+    .min(1)
+    .max(2)
+    .describe(
+      "1-2 concerns or gaps. Use **bold** markdown for the key issue in each point."
+    ),
   matchedSkills: z
     .array(z.string())
     .describe("Skills from job requirements found in resume"),
