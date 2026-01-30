@@ -4,18 +4,20 @@ import { useQuery } from "convex/react";
 import {
   AlertTriangle,
   ArrowLeft,
+  Briefcase,
   CheckCircle2,
   Clock,
   Download,
   Loader2,
   Mail,
+  Minus,
   Phone,
   User,
-  XCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { HighlightedResume } from "@/components/highlighted-resume";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
@@ -26,13 +28,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import {
   Empty,
   EmptyDescription,
@@ -40,27 +36,93 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import {
-  Progress,
-  ProgressIndicator,
-  ProgressTrack,
-} from "@/components/ui/progress";
+import { ButtonGroup } from "@/components/ui/group";
+import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { cn, formatRelativeDate } from "@/lib/utils";
 
-function getScoreColor(score: number) {
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+function getScoreProgressColor(score: number) {
+  if (score >= 80) return "text-green-500";
+  if (score >= 60) return "text-amber-500";
+  return "text-red-500";
+}
+
+function getScoreTextColor(score: number) {
   if (score >= 80) return "text-green-600 dark:text-green-400";
   if (score >= 60) return "text-amber-600 dark:text-amber-400";
   return "text-red-600 dark:text-red-400";
 }
 
-function getScoreBgColor(score: number) {
-  if (score >= 80) return "bg-green-500";
-  if (score >= 60) return "bg-amber-500";
-  return "bg-red-500";
+function CircularProgress({
+  value,
+  size = 120,
+  strokeWidth = 10,
+  className,
+}: {
+  value: number;
+  size?: number;
+  strokeWidth?: number;
+  className?: string;
+}) {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const offset = circumference - (value / 100) * circumference;
+
+  return (
+    <div className={cn("relative inline-flex", className)}>
+      <svg aria-hidden="true" className="-rotate-90" height={size} width={size}>
+        <title>Match score progress</title>
+        {/* Background circle */}
+        <circle
+          className="text-muted"
+          cx={size / 2}
+          cy={size / 2}
+          fill="none"
+          r={radius}
+          stroke="currentColor"
+          strokeWidth={strokeWidth}
+        />
+        {/* Progress circle */}
+        <circle
+          className={cn(
+            "transition-all duration-500 ease-out",
+            getScoreProgressColor(value)
+          )}
+          cx={size / 2}
+          cy={size / 2}
+          fill="none"
+          r={radius}
+          stroke="currentColor"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          strokeWidth={strokeWidth}
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span
+          className={cn(
+            "font-bold text-2xl tabular-nums",
+            getScoreTextColor(value)
+          )}
+        >
+          {value}%
+        </span>
+      </div>
+    </div>
+  );
 }
 
 function getScoreLabel(score: number) {
@@ -138,142 +200,156 @@ export default function ApplicantDetailPage() {
 
         {/* Applicant Header */}
         <div className="mb-8">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <h1 className="font-bold text-2xl tracking-tight">
-              {application.name}
-            </h1>
-            <div className="flex items-center gap-2">
-              <Tooltip>
-                <TooltipTrigger
-                  render={
-                    // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
-                    <a href={`mailto:${application.email}`} />
-                  }
-                >
-                  <Button size="icon" variant="outline">
-                    <Mail className="size-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipPopup>{application.email}</TooltipPopup>
-              </Tooltip>
-              {application.phone && (
-                <Tooltip>
-                  <TooltipTrigger
-                    render={
-                      // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
-                      <a href={`tel:${application.phone}`} />
-                    }
-                  >
-                    <Button size="icon" variant="outline">
-                      <Phone className="size-4" />
+          <div className="flex items-start gap-4">
+            {/* Avatar with Initials */}
+            <Avatar className="size-14 text-lg">
+              <AvatarFallback className="bg-primary/10 text-primary">
+                {getInitials(application.name)}
+              </AvatarFallback>
+            </Avatar>
+
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <h1 className="font-bold text-2xl tracking-tight">
+                    {application.name}
+                  </h1>
+                  {/* Grouped Meta Information */}
+                  <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground text-sm">
+                    <span className="flex items-center gap-1.5">
+                      <Briefcase className="size-3.5" />
+                      {job?.title} at {job?.company}
+                    </span>
+                    <span className="text-muted-foreground/40">•</span>
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="size-3.5" />
+                      Applied {formatRelativeDate(application.submittedAt)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Consolidated Action Buttons */}
+                <ButtonGroup>
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
+                        <a href={`mailto:${application.email}`} />
+                      }
+                    >
+                      <Button size="icon" variant="outline">
+                        <Mail className="size-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipPopup>{application.email}</TooltipPopup>
+                  </Tooltip>
+                  {application.phone && (
+                    <Tooltip>
+                      <TooltipTrigger
+                        render={
+                          // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
+                          <a href={`tel:${application.phone}`} />
+                        }
+                      >
+                        <Button size="icon" variant="outline">
+                          <Phone className="size-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipPopup>{application.phone}</TooltipPopup>
+                    </Tooltip>
+                  )}
+                  {application.resumeUrl && (
+                    <Button
+                      render={
+                        // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
+                        <a
+                          href={application.resumeUrl}
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        />
+                      }
+                      variant="outline"
+                    >
+                      <Download className="size-4" />
+                      Download
                     </Button>
-                  </TooltipTrigger>
-                  <TooltipPopup>{application.phone}</TooltipPopup>
-                </Tooltip>
-              )}
-              {application.resumeUrl && (
-                <Button
-                  render={
-                    // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
-                    <a
-                      href={application.resumeUrl}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    />
-                  }
-                >
-                  <Download className="size-4" />
-                  Download Resume
-                </Button>
-              )}
+                  )}
+                </ButtonGroup>
+              </div>
             </div>
           </div>
-          <p className="mt-1 text-muted-foreground">
-            Applied for {job?.title} at {job?.company}
-          </p>
-          <span className="mt-2 flex items-center gap-1.5 text-muted-foreground text-sm">
-            <Clock className="size-4" />
-            Applied {formatRelativeDate(application.submittedAt)}
-          </span>
         </div>
 
         {/* Analysis Content */}
-        <div className="space-y-6">
-          {/* Score Card */}
+        <div className="space-y-8">
+          {/* Processing State */}
           {application.status === "processing" && (
-            <Card>
-              <CardHeader className="text-center">
-                <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
-                  <Loader2 className="size-8 animate-spin text-muted-foreground" />
-                </div>
-                <CardTitle>Analyzing Resume</CardTitle>
-                <CardDescription>
-                  AI is analyzing this candidate's qualifications. This usually
-                  takes a few seconds.
-                </CardDescription>
-              </CardHeader>
-            </Card>
+            <div className="py-12 text-center">
+              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
+                <Loader2 className="size-8 animate-spin text-muted-foreground" />
+              </div>
+              <h3 className="font-semibold text-lg">Analyzing Resume</h3>
+              <p className="mt-1 text-muted-foreground text-sm">
+                AI is analyzing this candidate's qualifications. This usually
+                takes a few seconds.
+              </p>
+            </div>
           )}
+
+          {/* Error State */}
           {application.status === "error" && (
-            <Card>
-              <CardHeader className="text-center">
-                <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-destructive/10">
-                  <AlertTriangle className="size-8 text-destructive" />
-                </div>
-                <CardTitle>Analysis Failed</CardTitle>
-                <CardDescription>
-                  There was an error analyzing this resume. This could be due to
-                  an unsupported PDF format.
-                </CardDescription>
-              </CardHeader>
-            </Card>
+            <div className="py-12 text-center">
+              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-destructive/10">
+                <AlertTriangle className="size-8 text-destructive" />
+              </div>
+              <h3 className="font-semibold text-lg">Analysis Failed</h3>
+              <p className="mt-1 text-muted-foreground text-sm">
+                There was an error analyzing this resume. This could be due to
+                an unsupported PDF format.
+              </p>
+            </div>
           )}
+
           {application.status === "reviewed" && analysis && (
             <>
-              {/* Score Overview */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Match Score</span>
-                    <span
+              {/* Match Score Section */}
+              <section>
+                <div className="flex items-center gap-6">
+                  <CircularProgress value={analysis.score} />
+                  <div className="flex-1 pt-2">
+                    <p
                       className={cn(
-                        "font-bold text-3xl tabular-nums",
-                        getScoreColor(analysis.score)
+                        "font-semibold text-lg",
+                        getScoreTextColor(analysis.score)
                       )}
                     >
-                      {analysis.score}%
-                    </span>
-                  </CardTitle>
-                  <CardDescription>
-                    {getScoreLabel(analysis.score)}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Progress value={analysis.score}>
-                    <ProgressTrack className="h-3">
-                      <ProgressIndicator
-                        className={getScoreBgColor(analysis.score)}
-                      />
-                    </ProgressTrack>
-                  </Progress>
-                  <p className="mt-4 text-muted-foreground text-sm">
-                    {analysis.summary}
-                  </p>
-                </CardContent>
-              </Card>
+                      {getScoreLabel(analysis.score)}
+                    </p>
+                    <p className="mt-2 text-muted-foreground text-sm leading-relaxed">
+                      {analysis.summary}
+                    </p>
+                  </div>
+                </div>
+              </section>
 
-              {/* Skills */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Skills Analysis</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+              <Separator />
+              {/* Skills Analysis Section */}
+              <section>
+                <h2 className="mb-4 font-semibold text-muted-foreground text-sm uppercase tracking-wide">
+                  Skills Analysis
+                </h2>
+                <div className="space-y-5">
                   <div>
-                    <p className="mb-2 font-medium text-sm">Matched Skills</p>
+                    <p className="mb-2.5 font-medium text-sm">Matched Skills</p>
                     <div className="flex flex-wrap gap-2">
                       {analysis.matchedSkills.map((skill) => (
-                        <Badge key={skill} variant="success">
-                          <CheckCircle2 className="size-3" />
+                        <Badge
+                          className="font-semibold"
+                          key={skill}
+                          size="lg"
+                          variant="success"
+                        >
+                          <CheckCircle2 className="size-3.5" />
                           {skill}
                         </Badge>
                       ))}
@@ -285,11 +361,16 @@ export default function ApplicantDetailPage() {
                     </div>
                   </div>
                   <div>
-                    <p className="mb-2 font-medium text-sm">Missing Skills</p>
+                    <p className="mb-2.5 font-medium text-sm">Skill Gaps</p>
                     <div className="flex flex-wrap gap-2">
                       {analysis.missingSkills.map((skill) => (
-                        <Badge key={skill} variant="error">
-                          <XCircle className="size-3" />
+                        <Badge
+                          className="text-muted-foreground line-through decoration-muted-foreground/50"
+                          key={skill}
+                          size="lg"
+                          variant="outline"
+                        >
+                          <Minus className="size-3.5 opacity-50" />
                           {skill}
                         </Badge>
                       ))}
@@ -300,23 +381,24 @@ export default function ApplicantDetailPage() {
                       )}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </section>
             </>
           )}
 
-          {/* Cover Letter */}
+          {/* Cover Letter Section */}
           {application.coverLetter && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Cover Letter</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="whitespace-pre-wrap text-sm">
+            <>
+              <hr className="border-border" />
+              <section>
+                <h2 className="mb-4 font-semibold text-muted-foreground text-sm uppercase tracking-wide">
+                  Cover Letter
+                </h2>
+                <p className="whitespace-pre-wrap text-sm leading-relaxed">
                   {application.coverLetter}
                 </p>
-              </CardContent>
-            </Card>
+              </section>
+            </>
           )}
         </div>
       </div>

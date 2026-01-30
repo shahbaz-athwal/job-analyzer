@@ -156,8 +156,8 @@ function JobsContent() {
       <div className="mx-auto flex min-h-0 w-full max-w-7xl flex-1">
         {/* Left column - Job list */}
         <div className="w-full border-r lg:w-[340px] lg:shrink-0">
-          <ScrollArea className="h-full">
-            <div className="p-3">
+          <ScrollArea className="h-full" scrollFade>
+            <div className="mr-1 p-3">
               {jobs === undefined && (
                 <div className="space-y-3">
                   {[1, 2, 3, 4, 5].map((i) => (
@@ -253,7 +253,7 @@ function JobsContent() {
 
         {/* Right column - Job details */}
         <div className="hidden flex-1 lg:block">
-          <ScrollArea className="h-full">
+          <ScrollArea className="h-full" scrollFade>
             <div className="p-6">
               {!selectedJob && jobs !== undefined && (
                 <div className="flex h-[60vh] items-center justify-center">
