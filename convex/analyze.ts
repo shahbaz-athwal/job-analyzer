@@ -16,12 +16,10 @@ ${jobDescription}
 
 ## Instructions
 1. Score the candidate from 0-100 based on how well their skills and experience match the job requirements
-2. Provide a brief 1-2 sentence summary of their fit
-3. List their key strengths relevant to this role
-4. List any gaps or missing qualifications
-5. List specific skills from the job description that appear in their resume
-6. List specific required skills that are missing from their resume
-7. Convert the resume to well-formatted markdown and add highlight markers around relevant content
+2. Provide 3-4 concise bullet points summarizing the candidate's fit (include both positives and areas of concern)
+3. List specific skills from the job description that appear in their resume
+4. List specific required skills that are missing from their resume
+5. Convert the resume to well-formatted markdown and add highlight markers around relevant content
 
 ## Highlight Marker Format
 Use this exact syntax to mark highlighted content in the resume markdown:

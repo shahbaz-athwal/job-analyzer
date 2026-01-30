@@ -36,8 +36,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { ButtonGroup } from "@/components/ui/group";
-import { Separator } from "@/components/ui/separator";
+import { ButtonGroup, GroupSeparator } from "@/components/ui/group";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
@@ -210,7 +209,7 @@ export default function ApplicantDetailPage() {
 
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
+                <div className="flex-1">
                   <h1 className="font-bold text-2xl tracking-tight">
                     {application.name}
                   </h1>
@@ -220,7 +219,6 @@ export default function ApplicantDetailPage() {
                       <Briefcase className="size-3.5" />
                       {job?.title} at {job?.company}
                     </span>
-                    <span className="text-muted-foreground/40">•</span>
                     <span className="flex items-center gap-1.5">
                       <Clock className="size-3.5" />
                       Applied {formatRelativeDate(application.submittedAt)}
@@ -229,50 +227,71 @@ export default function ApplicantDetailPage() {
                 </div>
 
                 {/* Consolidated Action Buttons */}
-                <ButtonGroup>
+                <ButtonGroup aria-label="Contact actions">
                   <Tooltip>
                     <TooltipTrigger
                       render={
-                        // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
-                        <a href={`mailto:${application.email}`} />
+                        <Button
+                          render={
+                            // biome-ignore lint/a11y/useAnchorContent: aria-label provides accessible content
+                            <a
+                              aria-label="Send email"
+                              href={`mailto:${application.email}`}
+                            />
+                          }
+                          size="icon"
+                          variant="outline"
+                        />
                       }
                     >
-                      <Button size="icon" variant="outline">
-                        <Mail className="size-4" />
-                      </Button>
+                      <Mail className="size-4" />
                     </TooltipTrigger>
                     <TooltipPopup>{application.email}</TooltipPopup>
                   </Tooltip>
                   {application.phone && (
-                    <Tooltip>
-                      <TooltipTrigger
-                        render={
-                          // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
-                          <a href={`tel:${application.phone}`} />
-                        }
-                      >
-                        <Button size="icon" variant="outline">
+                    <>
+                      <GroupSeparator />
+                      <Tooltip>
+                        <TooltipTrigger
+                          render={
+                            <Button
+                              render={
+                                // biome-ignore lint/a11y/useAnchorContent: aria-label provides accessible content
+                                <a
+                                  aria-label="Call phone"
+                                  href={`tel:${application.phone}`}
+                                />
+                              }
+                              size="icon"
+                              variant="outline"
+                            />
+                          }
+                        >
                           <Phone className="size-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipPopup>{application.phone}</TooltipPopup>
-                    </Tooltip>
+                        </TooltipTrigger>
+                        <TooltipPopup>{application.phone}</TooltipPopup>
+                      </Tooltip>
+                    </>
                   )}
                   {application.resumeUrl && (
-                    <Button
-                      render={
-                        // biome-ignore lint/a11y/useAnchorContent: Button children provide accessible content
-                        <a
-                          href={application.resumeUrl}
-                          rel="noopener noreferrer"
-                          target="_blank"
-                        />
-                      }
-                      variant="outline"
-                    >
-                      <Download className="size-4" />
-                      Download
-                    </Button>
+                    <>
+                      <GroupSeparator />
+                      <Button
+                        render={
+                          // biome-ignore lint/a11y/useAnchorContent: aria-label provides accessible content
+                          <a
+                            aria-label="Download resume"
+                            href={application.resumeUrl}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                          />
+                        }
+                        variant="outline"
+                      >
+                        <Download className="size-4" />
+                        Download
+                      </Button>
+                    </>
                   )}
                 </ButtonGroup>
               </div>
@@ -325,22 +344,26 @@ export default function ApplicantDetailPage() {
                     >
                       {getScoreLabel(analysis.score)}
                     </p>
-                    <p className="mt-2 text-muted-foreground text-sm leading-relaxed">
-                      {analysis.summary}
-                    </p>
+                    <ul className="mt-3 space-y-1.5 text-muted-foreground text-sm leading-relaxed">
+                      {analysis.summaryPoints.map((point: string) => (
+                        <li className="flex gap-2" key={point}>
+                          <span className="text-muted-foreground/60">•</span>
+                          <span>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </section>
 
-              <Separator />
+              <div className="-mx-8 h-px bg-border" />
               {/* Skills Analysis Section */}
               <section>
-                <h2 className="mb-4 font-semibold text-muted-foreground text-sm uppercase tracking-wide">
-                  Skills Analysis
-                </h2>
                 <div className="space-y-5">
                   <div>
-                    <p className="mb-2.5 font-medium text-sm">Matched Skills</p>
+                    <p className="mb-2.5 font-semibold text-muted-foreground text-sm uppercase tracking-wide">
+                      Matched Skills
+                    </p>
                     <div className="flex flex-wrap gap-2">
                       {analysis.matchedSkills.map((skill) => (
                         <Badge
@@ -361,7 +384,9 @@ export default function ApplicantDetailPage() {
                     </div>
                   </div>
                   <div>
-                    <p className="mb-2.5 font-medium text-sm">Skill Gaps</p>
+                    <p className="mb-2.5 font-semibold text-muted-foreground text-sm uppercase tracking-wide">
+                      Skill Gaps
+                    </p>
                     <div className="flex flex-wrap gap-2">
                       {analysis.missingSkills.map((skill) => (
                         <Badge

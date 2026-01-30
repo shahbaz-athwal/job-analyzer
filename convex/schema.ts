@@ -37,9 +37,7 @@ export default defineSchema({
     analysis: v.optional(
       v.object({
         score: v.number(),
-        summary: v.string(),
-        strengths: v.array(v.string()),
-        weaknesses: v.array(v.string()),
+        summaryPoints: v.array(v.string()),
         matchedSkills: v.array(v.string()),
         missingSkills: v.array(v.string()),
         // Highlighted resume in markdown format

@@ -47,6 +47,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Frame } from "@/components/ui/frame";
+import { Group, GroupSeparator } from "@/components/ui/group";
 import {
   Progress,
   ProgressIndicator,
@@ -437,7 +438,7 @@ export default function JobDetailDashboardPage() {
             </span>
           </div>
         </div>
-        <div className="flex gap-2">
+        <Group>
           <Tooltip>
             <TooltipTrigger
               render={
@@ -449,6 +450,7 @@ export default function JobDetailDashboardPage() {
             />
             <TooltipContent>Copy public link</TooltipContent>
           </Tooltip>
+          <GroupSeparator />
           <Sheet onOpenChange={setIsDescriptionOpen} open={isDescriptionOpen}>
             <SheetTrigger
               render={
@@ -470,6 +472,7 @@ export default function JobDetailDashboardPage() {
               </SheetPanel>
             </SheetContent>
           </Sheet>
+          <GroupSeparator />
           <Tooltip>
             <TooltipTrigger
               render={
@@ -494,11 +497,12 @@ export default function JobDetailDashboardPage() {
                 : "Start accepting applications"}
             </TooltipContent>
           </Tooltip>
+          <GroupSeparator />
           <Button onClick={handleDelete} variant="destructive-outline">
             <Trash2 className="size-4" />
             Delete
           </Button>
-        </div>
+        </Group>
       </div>
 
       {/* Applicants Section */}
