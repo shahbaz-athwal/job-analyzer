@@ -4,6 +4,8 @@ import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
+const APPLICANT_PREVIEW_REGEX = /^\/dashboard\/jobs\/[^/]+\/[^/]+$/;
+
 export default function Header() {
   const pathname = usePathname();
 
@@ -11,6 +13,11 @@ export default function Header() {
     { to: "/jobs", label: "Find Jobs" },
     { to: "/dashboard", label: "Recruiter" },
   ] as const;
+
+  const isApplicantPreviewPage = pathname.match(APPLICANT_PREVIEW_REGEX);
+  if (isApplicantPreviewPage) {
+    return null;
+  }
 
   return (
     <div className="border-b bg-background/80 backdrop-blur-sm">
