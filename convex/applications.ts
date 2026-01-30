@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import {
@@ -137,5 +138,47 @@ export const get = query({
       job,
       resumeUrl,
     };
+  },
+});
+
+// Demo: Create 20 fake applications using uploaded resume files
+export const demoApply = mutation({
+  args: { jobId: v.id("jobs") },
+  handler: async (ctx, args) => {
+    // Verify job exists and is open
+    const job = await ctx.db.get(args.jobId);
+    if (!job) throw new Error("Job not found");
+    if (!job.isOpen) throw new Error("Job is not open");
+
+    // Get all storage files (resumes)
+    const storageFiles = await ctx.db.system.query("_storage").collect();
+    const filesToUse = storageFiles.slice(0, 20);
+
+    if (filesToUse.length === 0) {
+      throw new Error("No resume files found in storage");
+    }
+
+    // Generate fake applications with faker
+    for (const file of filesToUse) {
+      const name = faker.person.fullName();
+      const applicationId = await ctx.db.insert("applications", {
+        jobId: args.jobId,
+        name,
+        email: faker.internet.email(),
+        phone: faker.phone.number(),
+        coverLetter: faker.lorem.paragraphs(2),
+        resumeFileId: file._id,
+        resumeFileName: `${name.replace(/\s+/g, "_")}_resume.pdf`,
+        status: "submitted",
+        submittedAt: Date.now(),
+      });
+
+      // Schedule AI analysis
+      await ctx.scheduler.runAfter(0, internal.analyze.analyzeApplication, {
+        applicationId,
+      });
+    }
+
+    return filesToUse.length;
   },
 });

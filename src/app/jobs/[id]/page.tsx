@@ -24,10 +24,11 @@ import {
   PlayCircle,
   Trash2,
   Users,
+  Wand2,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Markdown } from "@/components/markdown";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -344,8 +345,15 @@ export default function JobDetailDashboardPage() {
   const applications = useQuery(api.applications.listByJob, { jobId });
   const updateJob = useMutation(api.jobs.update);
   const deleteJob = useMutation(api.jobs.remove);
+  const demoApply = useMutation(api.applications.demoApply);
 
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
+  const [isDemoMode, setIsDemoMode] = useState(false);
+  const [isDemoLoading, setIsDemoLoading] = useState(false);
+
+  useEffect(() => {
+    setIsDemoMode(localStorage.getItem("demo") === "true");
+  }, []);
 
   const handleToggleOpen = async () => {
     if (!job) return;
@@ -367,6 +375,22 @@ export default function JobDetailDashboardPage() {
       `${window.location.origin}/job-listings?job=${jobId}`
     );
     toast.success("Link copied to clipboard");
+  };
+
+  const handleDemoApply = async () => {
+    setIsDemoLoading(true);
+    try {
+      const count = await demoApply({ jobId });
+      toast.success(`Created ${count} demo applications`);
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to create demo applications"
+      );
+    } finally {
+      setIsDemoLoading(false);
+    }
   };
 
   if (job === undefined) {
@@ -502,6 +526,23 @@ export default function JobDetailDashboardPage() {
             <Trash2 className="size-4" />
             Delete
           </Button>
+          {isDemoMode && (
+            <>
+              <GroupSeparator />
+              <Button
+                disabled={isDemoLoading}
+                onClick={handleDemoApply}
+                variant="outline"
+              >
+                {isDemoLoading ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Wand2 className="size-4" />
+                )}
+                Demo Apply (20)
+              </Button>
+            </>
+          )}
         </Group>
       </div>
 
