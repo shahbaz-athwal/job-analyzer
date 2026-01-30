@@ -71,7 +71,7 @@ export function CreateJobSheet() {
       });
       closeSheet();
       formRef.current?.reset();
-      router.push(`/dashboard/jobs/${jobId}`);
+      router.push(`/jobs/${jobId}`);
     } catch (error) {
       console.error("Failed to create job:", error);
     } finally {

@@ -245,9 +245,7 @@ function ApplicantsTable({
             <TableRow
               className="cursor-pointer"
               key={row.id}
-              onClick={() =>
-                router.push(`/dashboard/jobs/${jobId}/${row.original._id}`)
-              }
+              onClick={() => router.push(`/jobs/${jobId}/${row.original._id}`)}
             >
               {row.getVisibleCells().map((cell) => (
                 <TableCell key={cell.id}>
@@ -274,7 +272,7 @@ function ApplicantCard({
   return (
     <Link
       className="flex items-center gap-4 rounded-lg border p-4 transition-colors hover:bg-accent/50"
-      href={`/dashboard/jobs/${jobId}/${app._id}`}
+      href={`/jobs/${jobId}/${app._id}`}
     >
       <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted font-semibold">
         {index + 1}
@@ -360,12 +358,12 @@ export default function JobDetailDashboardPage() {
     );
     if (!confirmed) return;
     await deleteJob({ id: jobId });
-    router.push("/dashboard");
+    router.push("/");
   };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(
-      `${window.location.origin}/jobs?job=${jobId}`
+      `${window.location.origin}/job-listings?job=${jobId}`
     );
     toast.success("Link copied to clipboard");
   };
@@ -393,7 +391,7 @@ export default function JobDetailDashboardPage() {
                 This job posting may have been deleted.
               </EmptyDescription>
             </EmptyHeader>
-            <Button render={<Link href="/dashboard" />}>
+            <Button render={<Link href="/" />}>
               <ArrowLeft className="size-4" />
               Back to Dashboard
             </Button>
@@ -408,9 +406,7 @@ export default function JobDetailDashboardPage() {
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink render={<Link href="/dashboard" />}>
-              All Jobs
-            </BreadcrumbLink>
+            <BreadcrumbLink render={<Link href="/" />}>All Jobs</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>

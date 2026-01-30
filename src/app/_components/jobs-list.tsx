@@ -93,7 +93,7 @@ function JobItem({ job }: { job: Job }) {
   return (
     <Link
       className="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-accent/50"
-      href={`/dashboard/jobs/${job._id}`}
+      href={`/jobs/${job._id}`}
     >
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
@@ -204,7 +204,7 @@ function JobsTable({ jobs }: { jobs: Job[] }) {
             <TableRow
               className="cursor-pointer"
               key={row.id}
-              onClick={() => router.push(`/dashboard/jobs/${row.original._id}`)}
+              onClick={() => router.push(`/jobs/${row.original._id}`)}
             >
               {row.getVisibleCells().map((cell) => (
                 <TableCell key={cell.id}>

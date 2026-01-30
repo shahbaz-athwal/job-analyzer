@@ -100,7 +100,7 @@ export default function ApplicantDetailPage() {
                 This application may have been deleted.
               </EmptyDescription>
             </EmptyHeader>
-            <Button render={<Link href={`/dashboard/jobs/${jobId}`} />}>
+            <Button render={<Link href={`/jobs/${jobId}`} />}>
               <ArrowLeft className="size-4" />
               Back to Applicants
             </Button>
@@ -119,15 +119,13 @@ export default function ApplicantDetailPage() {
         <Breadcrumb className="mb-6">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink render={<Link href="/dashboard" />}>
+              <BreadcrumbLink render={<Link href="/" />}>
                 All Jobs
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink
-                render={<Link href={`/dashboard/jobs/${jobId}`} />}
-              >
+              <BreadcrumbLink render={<Link href={`/jobs/${jobId}`} />}>
                 {job?.title ?? "Job"}
               </BreadcrumbLink>
             </BreadcrumbItem>
