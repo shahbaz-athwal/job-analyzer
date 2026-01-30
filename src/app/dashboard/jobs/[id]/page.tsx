@@ -28,7 +28,6 @@ import {
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
 import { Markdown } from "@/components/markdown";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -71,6 +70,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { toast } from "@/components/ui/toast";
 import {
   Tooltip,
   TooltipContent,
@@ -364,7 +364,9 @@ export default function JobDetailDashboardPage() {
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(`${window.location.origin}/jobs/${jobId}`);
+    navigator.clipboard.writeText(
+      `${window.location.origin}/jobs?job=${jobId}`
+    );
     toast.success("Link copied to clipboard");
   };
 

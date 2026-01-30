@@ -259,10 +259,48 @@ function AnchoredToasts() {
 	);
 }
 
+type ToastType = "success" | "error" | "warning" | "info" | "loading";
+
+interface ToastOptions {
+	description?: string;
+	duration?: number;
+}
+
+function createToast(type: ToastType, title: string, options?: ToastOptions) {
+	return toastManager.add({
+		title,
+		description: options?.description,
+		type,
+		timeout: options?.duration,
+	});
+}
+
+const toast = Object.assign(
+	(title: string, options?: ToastOptions) => createToast("info", title, options),
+	{
+		success: (title: string, options?: ToastOptions) =>
+			createToast("success", title, options),
+		error: (title: string, options?: ToastOptions) =>
+			createToast("error", title, options),
+		warning: (title: string, options?: ToastOptions) =>
+			createToast("warning", title, options),
+		info: (title: string, options?: ToastOptions) =>
+			createToast("info", title, options),
+		loading: (title: string, options?: ToastOptions) =>
+			createToast("loading", title, options),
+		dismiss: (id?: string) => {
+			if (id) {
+				toastManager.close(id);
+			}
+		},
+	}
+);
+
 export {
 	ToastProvider,
 	type ToastPosition,
 	toastManager,
 	AnchoredToastProvider,
 	anchoredToastManager,
+	toast,
 };
