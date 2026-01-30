@@ -66,12 +66,19 @@ interface HighlightedResumeProps {
 }
 
 // Preprocess markdown to convert {{type}}text{{/type}} to HTML mark elements
+// Loop handles nested tags by processing innermost first
 function preprocessMarkdown(markdown: string): string {
-  return markdown.replace(
-    HIGHLIGHT_REGEX,
-    (_match, type, content) =>
-      `<mark data-highlight="${type}">${content}</mark>`
-  );
+  let result = markdown;
+  let previous: string;
+  do {
+    previous = result;
+    result = result.replace(
+      HIGHLIGHT_REGEX,
+      (_match, type, content) =>
+        `<mark data-highlight="${type}">${content}</mark>`
+    );
+  } while (result !== previous);
+  return result;
 }
 
 // Component to render highlighted text with Rough Notation
